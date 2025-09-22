@@ -1,30 +1,64 @@
-# React + TypeScript + Vite
+# Campers Shop
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack e-commerce web application built with **React**, **Redux Toolkit**, **RTK Query**, **Node.js**, **Express**, and **MongoDB**. The app allows users to register, login, browse products, manage their cart, and perform secure checkout using **Stripe**. Admin users can manage users, update roles, and moderate the platform.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **User Authentication**
+  - Register, login, and logout
+  - JWT-based authentication with token persistence
+  - Role-based access (user/admin)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Product Management**
+  - Browse products with filtering
+  - Product API integration with Redux Toolkit Query
 
-- Configure the top-level `parserOptions` property like this:
+- **Cart & Checkout**
+  - Add, update, remove items in the cart
+  - Checkout integration with Stripe
+  - Order history tracking
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+- **Admin Features**
+  - View all users
+  - Update user roles
+  - Moderate products
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- **Error Handling**
+  - Global Express error handler
+  - Handles Mongoose, Zod, and custom validation errors
+
+- **State Management**
+  - Redux Toolkit with persisted auth state
+  - RTK Query for API calls
+
+---
+
+## Admin Credentials
+
+Use the following credentials to log in as an admin:
+
+- **Email:** admin@admin.com  
+- **Password:** admin
+
+---
+
+## Tech Stack
+
+- **Frontend:** React, Redux Toolkit, RTK Query, Ant Design, Axios
+- **Backend:** Node.js, Express, MongoDB, Mongoose, Zod
+- **Authentication:** JWT, bcrypt
+- **Payments:** Stripe API
+- **Persistence:** Redux Persist (auth)
+- **Deployment:** Vite (frontend), Node.js server (backend)
+
+---
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/devPronob/campers-shop.git
+cd campers-shop

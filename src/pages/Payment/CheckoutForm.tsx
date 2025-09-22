@@ -1,165 +1,131 @@
-import { useGetCartQuery } from '@/redux/api/features/cart/cartApi';
-import { useCreatePaymentMutation, useCreatePaymentWithUserMutation } from '@/redux/api/features/checkout/checkoutApi';
-import { RootState } from '@/redux/store';
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { useNavigate } from "react-router-dom";
+import { TCartItem } from "@/types/productTypes";
+import { useCreatePaymentWithUserMutation } from "@/redux/api/features/checkout/checkoutApi";
+import { useSelector } from "react-redux";
+import { selectPaymentUser } from "@/redux/api/features/payment/paymentSlice";
+import { toast } from "sonner";
+// import { selectCurrentUser } from "@/redux/api/features/auth/authSlice";
 
 interface CheckoutFormProps {
-    price: number;
-    cart: any; // Replace with a specific type if available
+  price: number;
+  cart: TCartItem[];
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({ price, cart }) => {
-    const stripe = useStripe();
-    const elements = useElements();
-    const navigate = useNavigate()
-    const [cardError, setCardError] = useState<string>('');
-    const [processing, setProcessing] = useState<boolean>(false);
-    const [transactionId, setTransactionId] = useState<string>('');
-    const userData = useSelector((state: RootState) => state.checkout);
-    // const [createPayment, { data }] = useCreatePaymentMutation();
-    // const [createPaymentWithUser, { data: userInfo }] = useCreatePaymentWithUserMutation();
-    const [clientSecret, setClientSecret] = useState("");
-    const { data, error, isLoading } = useGetCartQuery("");
-    console.log(data, "cartDatacartData")
-    useEffect(() => {
-        const fetchPaymentIntent = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/api/payment/createPayment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ price: price }),
-                });
+  const [payment] = useCreatePaymentWithUserMutation();
+  const user = useSelector(selectPaymentUser);
+  // const loginUser = useSelector(selectCurrentUser)
+  const stripe = useStripe();
+  const elements = useElements();
+  const navigate = useNavigate();
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+  const [cardError, setCardError] = useState<string>("");
+  const [processing, setProcessing] = useState<boolean>(false);
+  const [transactionId, setTransactionId] = useState<string>("");
+  const [clientSecret, setClientSecret] = useState<string>("");
+  console.log(user,"user")
 
-                const data = await response.json();
-                setClientSecret(data?.data.clientSecret);
-            } catch (error) {
-                console.error('Fetch error:', error);
-            }
-        };
-
-        fetchPaymentIntent();
-    }, [price]);
-
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (!stripe || !elements) {
-            return;
-        }
-
-        const card = elements.getElement(CardElement);
-        if (card === null) {
-            return;
-        }
-
-        const { error } = await stripe.createPaymentMethod({
-            type: 'card',
-            card
+  useEffect(() => {
+    const createPaymentIntent = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/payment/createPayment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ price }),
         });
-
-        if (error) {
-            setCardError(error.message);
-        } else {
-            setCardError('');
-        }
-
-        setProcessing(true);
-
-        if (clientSecret) {
-            navigate('/success')
-            //     const updates = payload.map(product => ({
-            //         _id: product._id,
-            //         quantity: product.quantity
-            //     }));
-
-            //    const updatedDataWithQuantity =
-        }
-
-        // const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(
-        //     clientSecret,
-        //     {
-        //         payment_method: {
-        //             card: card
-        //         },
-        //     },
-        // );
-
-        // if (confirmError) {
-        //     console.log(confirmError);
-
-        // }
-
-        setProcessing(false);
-        // if (paymentIntent) {
-        //     setTransactionId(paymentIntent.id);
-        //     // save payment information to the server
-        //     const payment = {
-        //         email: userData?.email,
-        //         stripePaymentId: paymentIntent.id,
-        //         name: userData.name,
-        //         cart: cart.data._id,
-        //         address: userData?.address,
-        //         phone: userData.phone
-        //     };
-
-        //     const requestOptions = {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(payment),
-        //     };
-
-        //     fetch('http://localhost:5000/api/payment', requestOptions)
-        //         .then((response) => response.json())
-        //         .then((data) => {
-        //             console.log(data);
-        //             if (data) {
-        //                 console.log(data);
-        //                 nagivate('/success')
-        //             }
-        //         })
-        //         .catch((error) => {
-        //             console.error('Error making POST request:', error);
-        //         });
-        // }
+        if (!res.ok) throw new Error("Failed to create payment intent");
+        const data = await res.json();
+        setClientSecret(data?.data?.clientSecret);
+      } catch {
+        setCardError("Unable to process payment at this time.");
+      }
     };
+    if (price > 0) createPaymentIntent();
+  }, [price]);
 
-    return (
-        <>
-            <form className='card' onSubmit={handleSubmit}>
-                <CardElement
-                    options={{
-                        style: {
-                            base: {
-                                fontSize: '16px',
-                                color: '#424770',
-                                '::placeholder': {
-                                    color: '#aab7c4',
-                                },
-                            },
-                            invalid: {
-                                color: '#9e2146',
-                            },
-                        },
-                    }}
-                />
-                <button className='pay_btn' type="submit" disabled={!stripe || processing}>
-                    {processing ? 'Processing...' : 'Pay'}
-                </button>
-            </form>
-            {cardError && <p className="text-red-600 ml-8">{cardError}</p>}
-            {transactionId && <p className="text-green-500">Transaction complete with transactionId: {transactionId}</p>}
-        </>
-    );
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+    setProcessing(true);
+    setCardError("");
+    const card = elements.getElement(CardElement);
+    if (!card) {
+      setCardError("Card element not found");
+      setProcessing(false);
+      return;
+    }
+    if (!clientSecret) {
+      setCardError("Payment is not ready. Please try again later.");
+      setProcessing(false);
+      return;
+    }
+    const result = await stripe.confirmCardPayment(clientSecret, { payment_method: { card } });
+    if (result.error) {
+      setCardError(result.error.message || "Payment failed");
+      setProcessing(false);
+      return;
+    }
+    if (result.paymentIntent?.status === "succeeded") {
+      setTransactionId(result.paymentIntent.id);
+      const toastId = toast.loading("Processing payment...");
+      try {
+        await payment({
+          name: user?.name || "",
+          email: user?.email || "",
+          address: user?.address || "",
+          phone: user?.phone || "",
+          stripePaymentId: result.paymentIntent.id,
+        }).unwrap();
+        toast.success("Payment successful!", { id: toastId });
+        await fetch("http://localhost:5000/api/payment/record", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            transactionId: result.paymentIntent.id,
+            amount: price,
+            cart,
+          }),
+        });
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to process payment!", { id: toastId });
+      }
+      navigate("/success", { state: { transactionId: result.paymentIntent.id, cart, total: price } });
+    }
+    setProcessing(false);
+  };
+
+
+  return (
+    <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+      <h2 className="text-2xl font-semibold mb-6 text-center">Stripe Payment</h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="border border-gray-300 rounded-md p-4">
+          <CardElement
+            options={{
+              style: {
+                base: { fontSize: "16px", color: "#424770", "::placeholder": { color: "#aab7c4" } },
+                invalid: { color: "#9e2146" },
+              },
+            }}
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={!stripe || processing}
+          className={`w-full py-3 rounded-md text-white font-semibold transition ${
+            processing ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+          }`}
+        >
+          {processing ? "Processing..." : `Pay $${price.toFixed(2)}`}
+        </button>
+      </form>
+      {cardError && <p className="text-red-600 mt-4 text-center">{cardError}</p>}
+      {transactionId && <p className="text-green-500 mt-4 text-center">Payment Successful: {transactionId}</p>}
+    </div>
+  );
 };
 
 export default CheckoutForm;

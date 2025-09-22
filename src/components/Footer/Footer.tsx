@@ -7,7 +7,7 @@ function Footer() {
                 <div className="mx-auto flex items-center justify-center grid max-w-screen-xl gap-y-8 gap-x-12 px-4 py-10 md:grid-cols-2 xl:grid-cols-4 xl:px-10">
                     <div className="max-w-sm">
                         <div className="mb-6 flex h-12 items-center space-x-2">
-                            <span className="text-2xl font-bold">Bel<span className="text-[#21b3f1]">Air</span>.</span>
+                            <span className="text-2xl font-bold">Elomus</span>
                         </div>
                         <div className="">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis ad a officia ea expedita!</div>
                     </div>

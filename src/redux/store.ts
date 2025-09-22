@@ -1,20 +1,44 @@
 import { configureStore } from '@reduxjs/toolkit'
-import productApi from './api/features/products/productApi'
 import cartReducer from '../redux/api/features/cart/cartSlice'
 import filterReducer from '../redux/api/features/filterData/filterDataSlice'
-import checkoutReducer from '../redux/api/features/checkout/checkoutSlice'
+import authReducer from './api/features/auth/authSlice'
+import paymentReducer from './api/features/payment/paymentSlice'
+import productApi from './api/features/products/productApi'
+import {
+  persistReducer,
+  persistStore,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
+
+// Persist configs
+const persistAuthConfig = { key: 'auth', storage }
+const persistPaymentConfig = { key: 'payment', storage }
+
+const persistedAuthReducer = persistReducer(persistAuthConfig, authReducer)
+const persistedPaymentReducer = persistReducer(persistPaymentConfig, paymentReducer)
+
 export const store = configureStore({
-    reducer: {
-        cart: cartReducer,
-        checkout: checkoutReducer,
-        filterData: filterReducer,
-        [productApi.reducerPath]: productApi.reducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(productApi.middleware),
+  reducer: {
+    cart: cartReducer,
+    filterData: filterReducer,
+    auth: persistedAuthReducer,
+    payment: persistedPaymentReducer,
+    [productApi.reducerPath]: productApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(productApi.middleware),
 })
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
+export const persistor = persistStore(store)
 export type RootState = ReturnType<typeof store.getState>
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch

@@ -1,94 +1,159 @@
-import { getData } from '@/redux/api/features/checkout/checkoutSlice';
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getData } from "@/redux/api/features/checkout/checkoutSlice";
+import { setPaymentData } from "@/redux/api/features/payment/paymentSlice";
+import { selectCurrentUser } from "@/redux/api/features/auth/authSlice";
 
-function Checkout() {
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
-    const [userData, setUserData] = useState({
-        name: '',
-        email: '',
-        address: '',
-        phone: ''
-    })
-
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
-
-    const handleInputChange = (e) => {
-        setUserData({ ...userData, [e.target.name]: e.target.value })
-    }
-    const handleSelectChange = (event) => {
-        setSelectedPaymentMethod(event.target.value);
-    };
-
-    const handleSubmit = () => {
-        dispatch(getData(userData));
-        console.log('Selected Payment Method:', selectedPaymentMethod);
-        console.log(userData)
-        if (selectedPaymentMethod === 'cashOnDelivery') {
-            navigate('/success')
-        }
-        if (selectedPaymentMethod === 'stripe') {
-            navigate('/payment')
-        }
-        // Handle the form submission logic here
-
-    };
-    return (
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 items-center px-8'>
-            <div>
-                <div className="lg:m-10">
-                    <form className="relative border border-gray-100 space-y-3  mx-auto rounded-md bg-white p-6 shadow-xl lg:p-10">
-                        <h1 className="mb-6 text-xl font-semibold lg:text-2xl">InFormation</h1>
-
-                        <div>
-                            <label className=""> Name </label>
-                            <input onChange={handleInputChange} name='name' type="text" placeholder="Username" className="mt-2 h-12 w-full rounded-md bg-gray-100 px-3" required />
-                        </div>
-                        <div>
-                            <label className=""> Email  </label>
-                            <input onChange={handleInputChange} name='email' type="email" placeholder="Info@example.com" className="mt-2 h-12 w-full rounded-md bg-gray-100 px-3" required />
-                        </div>
-                        <div>
-                            <label className=""> Address </label>
-                            <input onChange={handleInputChange} name='address' type="text" placeholder="******" className="mt-2 h-12 w-full rounded-md bg-gray-100 px-3" required />
-                        </div>
-                        <div className="grid gap-3 lg:grid-cols-2">
-                            <div>
-                                <label className=""> Phone: <span className="text-sm text-gray-400">(optional)</span> </label>
-                                <input onChange={handleInputChange} type="text" placeholder="+543 5445 0543" className="mt-2 h-12 w-full rounded-md bg-gray-100 px-3" required />
-                            </div>
-                        </div>
-
-                    </form>
-
-                </div>
-            </div>
-            <div>
-                {/* //payment options */}
-
-
-                <label for="default" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Payment Method</label>
-                <select value={selectedPaymentMethod}
-                    onChange={handleSelectChange} id="default" className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected>Choose Payment Method</option>
-                    <option value="cashOnDelivery">Cash On Delivery</option>
-                    <option value="stripe">Stripe Payment</option>
-                </select>
-
-
-
-                <button onClick={handleSubmit} type="button" className="group mt-3 inline-flex w-full items-center justify-center rounded-md bg-[#21b3f1] px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow">
-                    Place Order
-                    <svg xmlns="http://www.w3.org/2000/svg" className="group-hover:ml-8 ml-4 h-6 w-6 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                </button>
-
-            </div>
-        </div>
-    )
+interface IUserData {
+  name: string;
+  email: string;
+  address: string;
+  phone: string;
 }
 
-export default Checkout
+const Checkout: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+    const user = useSelector(selectCurrentUser);
+  const { cart = [], subtotal = 0, shipping = 0, total = 0 } = location.state || {};
+
+  const [userData, setUserData] = useState<IUserData>({
+    name: "",
+    email: user?.email as string,
+    address: "",
+    phone: "",
+  });
+
+  const [paymentMethod, setPaymentMethod] = useState<string>("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserData({ ...userData, [e.target.name]: e.target.value });
+    dispatch(setPaymentData({ user: userData, price:total }));
+  };
+
+  const handlePaymentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPaymentMethod(e.target.value);
+  };
+
+  const handleSubmit = () => {
+    if (!userData.name || !userData.email || !userData.address || !userData.phone) {
+      alert("Please fill all fields");
+      return;
+    }
+    if (!paymentMethod) {
+      alert("Please select a payment method");
+      return;
+    }
+    dispatch(
+      getData({
+        user: userData,
+        cart,
+        subtotal,
+        shipping,
+        total,
+        paymentMethod,
+      })
+    );
+    if (paymentMethod === "cashOnDelivery") {
+      navigate("/success", { state: { userData, cart, subtotal, shipping, total } });
+    } else if (paymentMethod === "stripe") {
+      navigate("/payment", { state: { userData, cart, subtotal, shipping, total } });
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white shadow-lg rounded-lg p-8">
+          <h2 className="text-2xl font-bold mb-6">Your Information</h2>
+          <form className="space-y-4">
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="John Doe"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                value={userData.name}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="john@example.com"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                value={user?.email}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Address</label>
+              <input
+                type="text"
+                name="address"
+                placeholder="123 Main Street"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                value={userData.address}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Phone</label>
+              <input
+                type="text"
+                name="phone"
+                placeholder="+1 234 567 890"
+                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                value={userData.phone}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          </form>
+        </div>
+        <div className="bg-white shadow-lg rounded-lg p-8 flex flex-col justify-between">
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Payment Method</h2>
+            <label className="block mb-2 text-gray-700 font-medium">Select a method</label>
+            <select
+              className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+              value={paymentMethod}
+              onChange={handlePaymentChange}
+              required
+            >
+              <option value="">-- Choose Payment Method --</option>
+              <option value="cashOnDelivery">Cash On Delivery</option>
+              <option value="stripe">Stripe Payment</option>
+            </select>
+          </div>
+          <button
+            onClick={handleSubmit}
+            className="mt-8 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            Place Order
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Checkout;

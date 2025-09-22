@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import  { useState } from 'react';
 import AddProductModal from '@/components/ui/AddProductModal';
 import DeleteModal from '@/components/ui/DeleteModal';
 import UpdateModel from '@/components/ui/UpdateModel';
@@ -6,18 +7,18 @@ import { useGetProductsWithoutFilterQuery } from '@/redux/api/features/products/
 import { TProduct } from '@/types/productTypes';
 
 function ProductManagement() {
-    const { data, error, isLoading } = useGetProductsWithoutFilterQuery(undefined);
+    const { data } = useGetProductsWithoutFilterQuery(undefined);
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenUpdate, setIsOpenUpdate] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null); // State to store the selected product
 
-    const openPopup = (product: TProduct) => {
+    const openPopup = (product: any) => {
         setSelectedProduct(product);
         setIsOpen(true);
     };
 
-    const openUpdate = (product: TProduct) => {
-        document.getElementById('my_modal_4').showModal()
+    const openUpdate = (product: any) => {
+        (document.getElementById('my_modal_4') as any).showModal()
         setSelectedProduct(product);
         setIsOpenUpdate(true); // Set isOpenUpdate to true to open the UpdateModel
     };
@@ -80,7 +81,7 @@ function ProductManagement() {
                     </div>
                 </div>
             </div>
-            {isOpenUpdate && <UpdateModel productId={selectedProduct?._id} />}
+            {isOpenUpdate && <UpdateModel productId={(selectedProduct as any)?._id} closePopup={closePopup} />}
             {isOpen && <DeleteModal items={selectedProduct} closePopup={closePopup} />}
         </div>
     );
