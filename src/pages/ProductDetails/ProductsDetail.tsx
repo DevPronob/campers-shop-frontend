@@ -4,9 +4,10 @@ import { decrement, increment } from '@/redux/api/features/cart/cartSlice';
 import { useGetSingleProductsQuery } from '@/redux/api/features/products/productApi';
 import { RootState } from '@/redux/store';
 import  { useState } from 'react'
-import toast from 'react-hot-toast';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 
 function ProductsDetail() {
@@ -30,9 +31,12 @@ const handleCart = async () => {
     };
     console.log(payload)
 
+
     const res = await createCart(payload).unwrap();
     console.log("Cart created:", res);
+   if(res?.success){
     toast.success("Product Added to Cart Successfully");
+   }
   } catch (err: any) {
     console.error("Failed to add product to cart", err?.data || err);
     toast.error("Failed Product Added to Cart");

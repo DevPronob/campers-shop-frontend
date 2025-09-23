@@ -16,7 +16,7 @@ const cartApi = baseApi.injectEndpoints({
                 method: 'POST',
                 body,
             }),
-            invalidatesTags: ['payment'],
+            invalidatesTags: ['cart'],
         }),
 
 
