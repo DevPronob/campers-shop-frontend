@@ -1,5 +1,4 @@
 import { TProduct } from '@/types/productTypes'
-import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function productCard({ product }: { product: TProduct }) {

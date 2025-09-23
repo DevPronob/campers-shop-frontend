@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function SearchAndSortingContainer({ search, setSort, sort, setSearch, priceRange, setPriceRange, category, setCategory }: any) {
+function SearchAndSortingContainer({  setSort,  setSearch,    setCategory }: any) {
 
-    const handleReset = (e) => {
+    const handleReset = (e:any) => {
         e.preventDefault();
         setSort(undefined)
         setSearch(undefined)

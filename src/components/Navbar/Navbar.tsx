@@ -63,6 +63,7 @@ function Navbar() {
                     <li><Link to="/users-management">User Management</Link></li>
                   </>
                 )}
+                <li><Link to="/about">About</Link></li>
               </ul>
             )}
           </div>
@@ -102,6 +103,7 @@ function Navbar() {
             {user?.role === 'USER' && <li><Link to="/order-history">Order History</Link></li>}
             {user?.role === 'admin' && <li><Link to="/productManagement">Product Management</Link></li>}
             {user?.role === 'admin' && <li><Link to="/users-management">User Management</Link></li>}
+             <li><Link to="/about">About</Link></li>
           </ul>
         </div>
       </div>

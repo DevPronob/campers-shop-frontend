@@ -12,7 +12,7 @@ import { RootState } from "../store"; // adjust path if needed
 
 // Basic fetch with auth header
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:5000/api", // ✅ keep consistent prefix
+  baseUrl: "https://capmers-server.vercel.app/api", // ✅ keep consistent prefix
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;

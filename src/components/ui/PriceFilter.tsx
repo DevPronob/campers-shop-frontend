@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import  { useState, useEffect } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
-const PriceFilter = ({ minPrice, maxPrice, onPriceChange }) => {
-    const [priceRange, setPriceRange] = useState([minPrice, maxPrice]);
+const PriceFilter = ({ minPrice, maxPrice, onPriceChange }:any) => {
+    const [priceRange, setPriceRange] = useState<any>([minPrice, maxPrice]);
 
     useEffect(() => {
         onPriceChange(priceRange[0], priceRange[1]);
@@ -16,7 +17,7 @@ const PriceFilter = ({ minPrice, maxPrice, onPriceChange }) => {
                 min={minPrice}
                 max={maxPrice}
                 value={priceRange}
-                onChange={value => setPriceRange(value)}
+                onChange={value => setPriceRange(value as any)}
                 allowCross={false}
             />
             <div className="price-values">

@@ -3,7 +3,6 @@ import { IUser } from "@/redux/api/features/auth/authSlice";
 import { useGetAllUsersQuery, useUpdateUserMutation } from "@/redux/api/features/user/user.Api";
 import { Button, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import React from "react";
 import { toast } from "sonner";
 
 function UserManagement() {

@@ -1,23 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCreateProductsMutation } from '@/redux/api/features/products/productApi';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 function AddProductModal() {
-    const [selectedImages, setSelectedImages] = useState([]);
-    const dispatch = useDispatch();
-    const [createProducts, { isLoading, isError, error }] = useCreateProductsMutation();
+    const [selectedImages, setSelectedImages] = useState<any>([]);
+    const [createProducts] = useCreateProductsMutation();
 
-    const handleImageChange = (event) => {
+    const handleImageChange = (event:any) => {
         const files = event.target.files;
         setSelectedImages([...files]);
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event:any) => {
         event.preventDefault();
 
         const formData = new FormData(event.target);
         const imageUrls = await Promise.all(
-            selectedImages.map(async (image) => {
+            selectedImages.map(async (image:any) => {
                 formData.set('image', image);
                 const response = await fetch('https://api.imgbb.com/1/upload?key=3865938eefff3a14cd02acc91c1d32e1', {
                     method: 'POST',
@@ -43,7 +42,7 @@ function AddProductModal() {
             console.log('Product created:', data);
             // Optionally dispatch an action or update local state on success
             // dispatch(productCreated(data));
-            document.getElementById('my_modal_3').close();
+            (document.getElementById('my_modal_3') as any).close();
         } catch (error) {
             console.error('Error creating product:', error);
             // Handle error state or display error message
@@ -52,7 +51,7 @@ function AddProductModal() {
 
     return (
         <>
-            <button className="btn bg-[#21b3f1] text-white" onClick={() => document.getElementById('my_modal_3').showModal()}>Add Product</button>
+            <button className="btn bg-[#21b3f1] text-white" onClick={() => (document.getElementById('my_modal_3') as any).showModal()}>Add Product</button>
             <dialog id="my_modal_3" className="modal">
                 <div className="modal-box">
                     <h2 className='text-center text-xl font-semibold py-2'>Add Product</h2>
@@ -79,7 +78,7 @@ function AddProductModal() {
 
                         <br />
                         <input className='btn  bg-[#21b3f1] text-white w-full' type="submit" value="Submit" />
-                        <button type="button" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={() => document.getElementById('my_modal_3').close()}>✕</button>
+                        <button type="button" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={() =>( document.getElementById('my_modal_3') as any).close()}>✕</button>
                     </form>
                 </div>
             </dialog>

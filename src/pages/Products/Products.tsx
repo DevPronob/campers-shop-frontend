@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import ProductCard from '../../components/ui/ProductCard';
 import FilterContainer from '@/components/ui/FilterContainer';
-import { useGetProductsQuery, Product } from '@/redux/api/features/products/productApi'; // Assuming Product type definition
-import SearchAndSortingContainer from '@/components/ui/SearchAndSortingContainer';
+import { useGetProductsQuery } from '@/redux/api/features/products/productApi'; // Assuming Product type definition
+import { TProduct } from '@/types/productTypes';
 
 function Products() {
     const [priceRange, setPriceRange] = useState([10, 100]); // Adjusted default price range
@@ -10,7 +10,7 @@ function Products() {
     const [search, setSearch] = useState('');
     const [sort, setSort] = useState('name');
 
-    const { data, error, isLoading } = useGetProductsQuery({
+    const { data} = useGetProductsQuery({
         minPrice: priceRange[0],
         maxPrice: priceRange[1],
         category: category || undefined,
@@ -34,7 +34,7 @@ function Products() {
                     />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {data?.data.map((item: Product) => (
+                    {data?.data.map((item: TProduct) => (
                         <ProductCard key={item._id} product={item} />
                     ))}
                 </div>

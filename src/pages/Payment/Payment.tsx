@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useGetCartQuery } from '@/redux/api/features/cart/cartApi';

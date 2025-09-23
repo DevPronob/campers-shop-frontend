@@ -7,13 +7,13 @@ import Cart from "@/pages/Cart/Cart";
 import Checkout from "@/pages/Checkout/Checkout";
 import SuccessPage from "@/components/SuccessPage";
 import Payment from "@/pages/Payment/Payment";
-import ProductManagement from "@/pages/ProductManagement/ProductManagement";
 import About from "@/pages/About/About";
 import Register from "@/pages/Auth/Register";
 import Login from "@/pages/Auth/Login";
 import OrderHistory from "@/pages/OrderHistory.tsx/OrderHisory";
 import UserManagement from "@/pages/UserManagement/UserManagement";
 import PrivateRoute from "@/components/layout/ProctectedRoute";
+import  ProductManagement  from '@/pages/ProductManagement/ProductManagement';
 
 export const router = createBrowserRouter([
     {
@@ -65,7 +65,7 @@ export const router = createBrowserRouter([
                 element: <PrivateRoute role="USER"><OrderHistory /></PrivateRoute>
             },
             {
-                path: "/about-us",
+                path: "/about",
                 element: <About />
             },
              {
