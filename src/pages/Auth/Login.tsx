@@ -85,7 +85,7 @@ function Login() {
               fontWeight: 500,
             }}
           >
-            Register
+            Login
           </Button>
         </CsForm>
 

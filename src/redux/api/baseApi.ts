@@ -44,7 +44,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
     console.log("🔄 Sending refresh token...");
 
     const refreshResponse = await fetch(
-      "http://localhost:5000/api/v1/auth/refresh-token",
+      "https://capmers-server.vercel.app/api/v1/auth/refresh-token",
       {
         method: "POST",
         credentials: "include",

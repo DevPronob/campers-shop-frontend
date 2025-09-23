@@ -32,7 +32,7 @@ const handleCart = async () => {
 
     const res = await createCart(payload).unwrap();
     console.log("Cart created:", res);
-    // toast.success("Product Added to Cart Successfully");
+    toast.success("Product Added to Cart Successfully");
   } catch (err: any) {
     console.error("Failed to add product to cart", err?.data || err);
     toast.error("Failed Product Added to Cart");
