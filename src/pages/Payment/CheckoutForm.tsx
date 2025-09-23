@@ -30,7 +30,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ price, cart }) => {
   useEffect(() => {
     const createPaymentIntent = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/payment/createPayment", {
+        const res = await fetch("https://campers-ecom-backend.vercel.app/api/payment/createPayment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ price }),
@@ -79,7 +79,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ price, cart }) => {
           stripePaymentId: result.paymentIntent.id,
         }).unwrap();
         toast.success("Payment successful!", { id: toastId });
-        await fetch("http://localhost:5000/api/payment/record", {
+        await fetch("https://campers-ecom-backend.vercel.app/api/payment/record", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

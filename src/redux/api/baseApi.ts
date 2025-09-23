@@ -12,7 +12,7 @@ import { RootState } from "../store"; // adjust path if needed
 
 // Basic fetch with auth header
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:5000/api", // ✅ keep consistent prefix
+  baseUrl: "https://campers-ecom-backend.vercel.app/api", // ✅ keep consistent prefix
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
@@ -44,7 +44,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
     console.log("🔄 Sending refresh token...");
 
     const refreshResponse = await fetch(
-      "http://localhost:5000/api/v1/auth/refresh-token",
+      "https://campers-ecom-backend.vercel.app/api/v1/auth/refresh-token",
       {
         method: "POST",
         credentials: "include",
