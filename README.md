@@ -44,6 +44,13 @@ Use the following credentials to log in as an admin:
 
 ---
 
+## Deployment Links
+
+**Frontend:** https://campers-ecom-frontend.vercel.app/
+**Backend:** https://campers-ecom-backend.vercel.app/
+
+---
+
 ## Tech Stack
 
 - **Frontend:** React, Redux Toolkit, RTK Query, Ant Design, Axios

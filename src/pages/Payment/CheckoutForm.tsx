@@ -6,6 +6,7 @@ import { useCreatePaymentWithUserMutation } from "@/redux/api/features/checkout/
 import { useSelector } from "react-redux";
 import { selectPaymentUser } from "@/redux/api/features/payment/paymentSlice";
 import { toast } from "sonner";
+import cartApi from "@/redux/api/features/cart/cartApi";
 // import { selectCurrentUser } from "@/redux/api/features/auth/authSlice";
 
 interface CheckoutFormProps {
@@ -38,6 +39,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ price, cart }) => {
         if (!res.ok) throw new Error("Failed to create payment intent");
         const data = await res.json();
         setClientSecret(data?.data?.clientSecret);
+        cartApi.util.invalidateTags(['cart']);
+
       } catch {
         setCardError("Unable to process payment at this time.");
       }
@@ -91,6 +94,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ price, cart }) => {
       } catch (err) {
         console.error(err);
         toast.error("Failed to process payment!", { id: toastId });
+        console.log(err)
       }
       navigate("/success", { state: { transactionId: result.paymentIntent.id, cart, total: price } });
     }

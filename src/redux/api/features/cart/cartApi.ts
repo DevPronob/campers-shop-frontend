@@ -1,6 +1,6 @@
 import { baseApi } from "../../baseApi";
 
-const cartApi = baseApi.injectEndpoints({
+export const cartApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         createCart: builder.mutation({
             query: (body) => ({
