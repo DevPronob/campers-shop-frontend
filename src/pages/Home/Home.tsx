@@ -6,6 +6,8 @@ import CategorySection from '@/components/CategorySection'
 import FeaturedProductSection from '@/components/FeaturedProductSection'
 import TestomonialSection from '@/components/TestomonialSection/TestomonialSection'
 import FaqSection from '@/components/FaqSection'
+import Services from '@/components/ui/Services'
+import AboutUs from '@/components/ui/AboutUs'
 
 function Home() {
     const { data } = useGetProductsQuery(undefined)
@@ -14,9 +16,11 @@ function Home() {
         <div>
 
             <HeroCarousel />
+            <Services/>
             <BestSellingProductsSection />
             <CategorySection />
             <FeaturedProductSection />
+            <AboutUs/>
             <TestomonialSection />
             <FaqSection />
         </div>

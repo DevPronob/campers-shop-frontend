@@ -2,7 +2,7 @@ import { TCategory } from '@/types/CategoryTypes';
 
 function CategoryCard({ item }: { item: TCategory }) {
     return (
-        <div className="p-1 flex flex-wrap items-center justify-center">
+        <div className="p-1 flex flex-wrap items-center justify-center rounded-3xl overflow-hidden">
             <div
                 style={{
                     backgroundImage: `url(${item?.imageUrl})`,

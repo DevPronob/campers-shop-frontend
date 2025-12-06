@@ -1,71 +1,89 @@
-# Campers Shop
+# 🏕️ Campers Shop — Full-Stack E-Commerce Application
 
-A full-stack e-commerce web application built with **React**, **Redux Toolkit**, **RTK Query**, **Node.js**, **Express**, and **MongoDB**. The app allows users to register, login, browse products, manage their cart, and perform secure checkout using **Stripe**. Admin users can manage users, update roles, and moderate the platform.
-
----
-
-## Features
-
-- **User Authentication**
-  - Register, login, and logout
-  - JWT-based authentication with token persistence
-  - Role-based access (user/admin)
-
-- **Product Management**
-  - Browse products with filtering
-  - Product API integration with Redux Toolkit Query
-
-- **Cart & Checkout**
-  - Add, update, remove items in the cart
-  - Checkout integration with Stripe
-  - Order history tracking
-
-- **Admin Features**
-  - View all users
-  - Update user roles
-  - Moderate products
-
-- **Error Handling**
-  - Global Express error handler
-  - Handles Mongoose, Zod, and custom validation errors
-
-- **State Management**
-  - Redux Toolkit with persisted auth state
-  - RTK Query for API calls
+A fully functional **MERN + Stripe** e-commerce web application built with **React, Redux Toolkit, RTK Query, Node.js, Express, MongoDB**, and **Stripe**.  
+It includes complete authentication, product management, cart, checkout, and admin controls.
 
 ---
 
-## Admin Credentials
+## 🚀 Live Demo
 
-Use the following credentials to log in as an admin:
-
-- **Email:** admin@admin.com  
-- **Password:** admin
+🔗 **Frontend:** https://campers-ecom-frontend.vercel.app/  
+🔗 **Backend API:** https://campers-ecom-backend.vercel.app/
 
 ---
 
-## Deployment Links
+## ✨ Features
 
-**Frontend:** https://campers-ecom-frontend.vercel.app/
-**Backend:** https://campers-ecom-backend.vercel.app/
+### 🔐 User Authentication
+- Register, login, logout  
+- JWT authentication with refresh token  
+- Persistent login  
+- Role-based access (User / Admin)
+
+### 🛒 Product Management
+- Browse products  
+- Sorting & filtering  
+- Product API using **RTK Query**
+
+### 🛍️ Cart & Checkout
+- Add/update/remove items  
+- Real-time cart state  
+- Secure **Stripe checkout**  
+- Order history tracking
+
+### 🛠️ Admin Dashboard
+- View all users  
+- Update user roles  
+- Moderate products  
+- Protected admin routes
+
+### ⚙️ Error Handling
+- Global Express error handler  
+- Handles **Mongoose**, **Zod**, and custom errors  
+
+### 🧠 State Management
+- Redux Toolkit  
+- RTK Query for API calls  
+- Redux Persist (auth)
 
 ---
 
-## Tech Stack
+## 🔐 Admin Demo Credentials
 
-- **Frontend:** React, Redux Toolkit, RTK Query, Ant Design, Axios
-- **Backend:** Node.js, Express, MongoDB, Mongoose, Zod
-- **Authentication:** JWT, bcrypt
-- **Payments:** Stripe API
-- **Persistence:** Redux Persist (auth)
-- **Deployment:** Vite (frontend), Node.js server (backend)
+Use the following credentials to explore admin features:
+
+- **Email:** `admin@admin.com`  
+- **Password:** `admin`
 
 ---
 
-## Installation
+## 🧰 Tech Stack
 
-1. Clone the repository:
+### Frontend
+- React + Vite  
+- Redux Toolkit  
+- RTK Query  
+- Ant Design  
+- Axios  
 
+### Backend
+- Node.js  
+- Express  
+- MongoDB & Mongoose  
+- Zod validation schema  
+- JWT authentication  
+- bcrypt hashing  
+- Stripe payment API  
+
+### Deployment
+- **Frontend:** Vercel  
+- **Backend:** Render / Vercel  
+
+---
+
+## 🛠️ Installation & Setup
+
+### 1️⃣ Clone repository
 ```bash
 git clone https://github.com/devPronob/campers-shop.git
 cd campers-shop

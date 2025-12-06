@@ -16,12 +16,12 @@ const Checkout: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-    const user = useSelector(selectCurrentUser);
+  const user = useSelector(selectCurrentUser);
   const { cart = [], subtotal = 0, shipping = 0, total = 0 } = location.state || {};
 
   const [userData, setUserData] = useState<IUserData>({
     name: "",
-    email: user?.email as string,
+    email: user?.email || "",
     address: "",
     phone: "",
   });
@@ -29,8 +29,9 @@ const Checkout: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<string>("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
-    dispatch(setPaymentData({ user: userData, price:total }));
+    const updatedData = { ...userData, [e.target.name]: e.target.value };
+    setUserData(updatedData);
+    dispatch(setPaymentData({ user: updatedData, price: total }));
   };
 
   const handlePaymentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -64,67 +65,35 @@ const Checkout: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white shadow-lg rounded-lg p-8">
-          <h2 className="text-2xl font-bold mb-6">Your Information</h2>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 font-poppins">
+      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* User Info */}
+        <div className="bg-white rounded-lg shadow p-8 border border-gray-200">
+          <h2 className="text-2xl font-semibold text-[#004E64] mb-6">Your Information</h2>
           <form className="space-y-4">
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="John Doe"
-                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
-                value={userData.name}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="john@example.com"
-                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
-                value={user?.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">Address</label>
-              <input
-                type="text"
-                name="address"
-                placeholder="123 Main Street"
-                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
-                value={userData.address}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">Phone</label>
-              <input
-                type="text"
-                name="phone"
-                placeholder="+1 234 567 890"
-                className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
-                value={userData.phone}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+            {["name", "email", "address", "phone"].map((field) => (
+              <div key={field}>
+                <label className="block text-gray-700 font-medium mb-1 capitalize">{field}</label>
+                <input
+                  type={field === "email" ? "email" : "text"}
+                  name={field}
+                  placeholder={`Enter your ${field}`}
+                  className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-[#004E64] focus:border-transparent transition"
+                  value={(userData as any)[field]}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            ))}
           </form>
         </div>
-        <div className="bg-white shadow-lg rounded-lg p-8 flex flex-col justify-between">
+
+        {/* Payment & Summary */}
+        <div className="bg-white rounded-lg shadow p-8 border border-gray-200 flex flex-col justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-6">Payment Method</h2>
-            <label className="block mb-2 text-gray-700 font-medium">Select a method</label>
+            <h2 className="text-2xl font-semibold text-[#004E64] mb-4">Payment Method</h2>
             <select
-              className="w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-[#004E64] focus:border-transparent transition mb-6"
               value={paymentMethod}
               onChange={handlePaymentChange}
               required
@@ -133,22 +102,30 @@ const Checkout: React.FC = () => {
               <option value="cashOnDelivery">Cash On Delivery</option>
               <option value="stripe">Stripe Payment</option>
             </select>
+
+            {/* Order Summary */}
+            <div className="p-4 rounded-md border border-gray-200 mb-6">
+              <h3 className="text-lg font-medium text-gray-800 mb-2">Order Summary</h3>
+              <div className="flex justify-between text-gray-700 mb-1">
+                <span>Subtotal:</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-gray-700 mb-1">
+                <span>Shipping:</span>
+                <span>${shipping.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between font-semibold text-gray-900 mt-2 border-t pt-2">
+                <span>Total:</span>
+                <span>${total.toFixed(2)}</span>
+              </div>
+            </div>
           </div>
+
           <button
             onClick={handleSubmit}
-            className="mt-8 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+            className="w-full bg-[#FF6B35] hover:bg-[#e55b2b] text-white font-semibold py-3 rounded-md transition"
           >
             Place Order
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
           </button>
         </div>
       </div>

@@ -1,114 +1,137 @@
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
-import { selectCurrentUser, logout, IUser } from '@/redux/api/features/auth/authSlice'
-import { Button } from 'antd'
-import authApi from '@/redux/api/features/auth/auth.api'
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { selectCurrentUser, logout, IUser } from '@/redux/api/features/auth/authSlice';
+import { Button, Badge } from 'antd';
+import { ShoppingCartOutlined, HeartOutlined, MenuOutlined, CloseOutlined } from '@ant-design/icons';
+import authApi from '@/redux/api/features/auth/auth.api';
+import { useGetCartQuery } from '@/redux/api/features/cart/cartApi';
+import { useGetWishlistQuery } from '@/redux/api/features/wishlist/wishlist.api';
+import { TCartItem } from '@/types/productTypes';
 
 function Navbar() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const user: IUser | null = useSelector(selectCurrentUser)
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const user: IUser | null = useSelector(selectCurrentUser);
+  const { data: cart } = useGetCartQuery(undefined);
+  const { data: wishlist } = useGetWishlistQuery(undefined, { skip: !user });
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const cartItemCount = cart ? cart.data.reduce((total: number, item: TCartItem) => total + item.quantity, 0) : 0;
+  const wishlistCount = wishlist?.data?.length || 0;
 
   const handleLogout = () => {
-    dispatch(logout())
-    navigate('/')
-    dispatch(authApi.util.resetApiState())
-  }
+    dispatch(logout());
+    dispatch(authApi.util.resetApiState());
+    navigate('/');
+  };
 
   return (
-    <div className="px-5">
-      <div className="navbar bg-base-100">
-        <div className="navbar-start">
-          <div className="dropdown z-10">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost lg:hidden"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100">
+      <nav className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+        <Link to="/" className="flex items-center space-x-2">
+          <span className="text-2xl font-extrabold tracking-tight text-[#004E64]">
+            Elomus
+          </span>
+        </Link>
+
+        <ul className="hidden lg:flex items-center gap-8 text-gray-700 font-medium">
+          <li><Link to="/" className="hover:text-[#004E64] transition">Home</Link></li>
+          <li><Link to="/products" className="hover:text-[#004E64] transition">Products</Link></li>
+          <li><Link to="/about" className="hover:text-[#004E64] transition">About</Link></li>
+          {user?.role === 'USER' && (
+            <li><Link to="/order-history" className="hover:text-[#004E64] transition">Orders</Link></li>
+          )}
+          {user?.role === 'admin' && (
+            <>
+              <li><Link to="/productManagement" className="hover:text-[#004E64] transition">Products Admin</Link></li>
+              <li><Link to="/users-management" className="hover:text-[#004E64] transition">Users</Link></li>
+            </>
+          )}
+        </ul>
+
+        <div className="flex items-center gap-4">
+          {user && (
+            <Link to="/wishlist">
+              <Badge count={wishlistCount} offset={[0, 5]}>
+                <HeartOutlined className="text-2xl text-gray-600 hover:text-[#004E64] transition" />
+              </Badge>
+            </Link>
+          )}
+
+          <Link to="/cart">
+            <Badge count={cartItemCount} offset={[0, 5]}>
+              <ShoppingCartOutlined className="text-2xl text-gray-600 hover:text-[#004E64] transition" />
+            </Badge>
+          </Link>
+
+          {user ? (
+            <Button
+              onClick={handleLogout}
+              type="primary"
+              style={{
+                backgroundColor: '#004E64',
+                borderColor: '#004E64',
+                borderRadius: '8px',
+                fontWeight: 500,
+                height: 40,
+              }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />
-              </svg>
-            </div>
+              Logout
+            </Button>
+          ) : (
+            <Link
+              to="/login"
+              className="text-white bg-[#004E64] px-5 py-2 rounded-lg font-medium hover:bg-[#003C4C] transition"
+            >
+              Login
+            </Link>
+          )}
 
-            {isDropdownOpen && (
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-              >
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/products">Products</Link></li>
-                <li><Link to="/cart">Cart</Link></li>
-                {user ? (
-                  <li><span className="font-bold">{user.name}</span></li>
-                ) : (
-                  <li><Link to="/login">Login</Link></li>
-                )}
-                {user?.role === 'admin' && (
-                  <>
-                    <li><Link to="/productManagement">Product Management</Link></li>
-                    <li><Link to="/users-management">User Management</Link></li>
-                  </>
-                )}
-                <li><Link to="/about">About</Link></li>
-              </ul>
-            )}
-          </div>
-
-          <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Logo" />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-              Elomus
-            </span>
-          </a>
-        </div>
-
-        <div className="navbar-end hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/products">Products</Link></li>
-            <li><Link to="/cart">Cart</Link></li>
-            {user ? (
-              <li>
-                <Button
-                  onClick={handleLogout}
-                  type="primary"
-                  htmlType="submit"
-                  block
-                  style={{
-                    height: 40,
-                    borderRadius: '8px',
-                    fontWeight: 500,
-                  }}
-                >
-                  Logout
-                </Button>
-              </li>
+          <button
+            className="lg:hidden text-gray-700"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            {isDropdownOpen ? (
+              <CloseOutlined className="text-2xl" />
             ) : (
-              <li><Link to="/login">Login</Link></li>
+              <MenuOutlined className="text-2xl" />
             )}
-            {user?.role === 'USER' && <li><Link to="/order-history">Order History</Link></li>}
-            {user?.role === 'admin' && <li><Link to="/productManagement">Product Management</Link></li>}
-            {user?.role === 'admin' && <li><Link to="/users-management">User Management</Link></li>}
-             <li><Link to="/about">About</Link></li>
+          </button>
+        </div>
+      </nav>
+
+      {isDropdownOpen && (
+        <div className="lg:hidden absolute top-[70px] left-0 w-full bg-white border-t border-gray-100 shadow-md animate-slideDown">
+          <ul className="flex flex-col items-start px-6 py-4 space-y-3 font-medium text-gray-700">
+            <li><Link to="/" onClick={() => setIsDropdownOpen(false)}>Home</Link></li>
+            <li><Link to="/products" onClick={() => setIsDropdownOpen(false)}>Products</Link></li>
+
+            {user && (
+              <li>
+                <Link to="/wishlist" onClick={() => setIsDropdownOpen(false)}>
+                  Wishlist ({wishlistCount})
+                </Link>
+              </li>
+            )}
+
+            <li><Link to="/cart" onClick={() => setIsDropdownOpen(false)}>Cart ({cartItemCount})</Link></li>
+
+            {user && <li className="font-bold">{user.name}</li>}
+
+            {user?.role === 'admin' && (
+              <>
+                <li><Link to="/productManagement" onClick={() => setIsDropdownOpen(false)}>Product Management</Link></li>
+                <li><Link to="/users-management" onClick={() => setIsDropdownOpen(false)}>User Management</Link></li>
+              </>
+            )}
+
+            <li><Link to="/about" onClick={() => setIsDropdownOpen(false)}>About</Link></li>
           </ul>
         </div>
-      </div>
-    </div>
-  )
+      )}
+    </header>
+  );
 }
 
-export default Navbar
+export default Navbar;

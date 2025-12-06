@@ -66,7 +66,7 @@ const handleCart = async () => {
                     <div className="max-w-6xl px-4 py-4 mx-auto lg:py-8 md:px-6">
                         <div className="flex flex-wrap -mx-4">
                             <div className="w-full px-4 md:w-1/2 ">
-                                <div className="sticky top-0 z-50 overflow-hidden ">
+                                <div className="sticky top-0 z-20 overflow-hidden ">
                                     <div className="relative mb-6 lg:mb-10 lg:h-2/4 ">
                                         <img src={detailProduct?.data.imageUrls[productSlider]} alt=""
                                             className="object-cover w-full lg:h-full " />
@@ -76,7 +76,7 @@ const handleCart = async () => {
                                             detailProduct?.data.imageUrls?.map((item:string, index:number) => (
                                                 <div className="w-1/2 p-2 sm:w-1/4">
                                                     <div
-                                                        className="block border border-blue-300 dark:border-transparent dark:hover:border-blue-300 hover:border-blue-300">
+                                                        className="block border border-[#004E64] dark:border-transparent dark:hover:border-[#004E64] hover:border-[#004E64] cursor-pointer">
                                                         <img onClick={() => setProductslider(index)} src={item} alt=""
                                                             className="object-cover w-full lg:h-20" />
                                                     </div>
@@ -125,7 +125,7 @@ const handleCart = async () => {
                                             {detailProduct?.data.description}
                                         </p>
 
-                                        <p className="inline-block font-bold text-[#21b3f1] mb-4">
+                                        <p className="inline-block font-bold text-[#FF6B35] mb-4">
                                             {/* <span>{detailProduct?.offerPrice}</span> */}
                                             <span
                                                 className="text-[16px] font-bold">${detailProduct?.data.price}</span>
@@ -198,16 +198,16 @@ const handleCart = async () => {
 
                                             {detailProduct?.data.stock > 1 ?
                                                 <button onClick={handleCart} type="button"
-                                                    className="py-2 px-4 bg-[#ffffff] border border-[#21b3f1] text-black w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#21b3f1] focus:ring-offset-2 focus:ring-offset-indigo-200 hover:bg-[#21b3f1] hover:text-white rounded-lg">Add To Cart</button>
+                                                    className="py-2 px-4 bg-[#ffffff] border border-[#004E64] text-black w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#004E64] focus:ring-offset-2 focus:ring-offset-[#004E64] hover:bg-[#004E64] hover:text-white rounded-lg">Add To Cart</button>
                                                 :
                                                 <button disabled={true} type="button"
-                                                    className="py-2 px-4 bg-[#ffffff] border border-[#21b3f1] text-black w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#21b3f1] focus:ring-offset-2 focus:ring-offset-indigo-200 hover:bg-[#21b3f1] hover:text-white rounded-lg">Add To Cart</button>
+                                                    className="py-2 px-4 bg-[#ffffff] border border-[#004E64] text-black w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#004E64] focus:ring-offset-2 focus:ring-offset-[#004E64] hover:bg-[#004E64] hover:text-white rounded-lg">Add To Cart</button>
                                             }
 
                                         </div>
                                         <div className="w-full px-4 mb-4 lg:mb-0 lg:w-1/2">
                                             <button type="button"
-                                                className="py-2 px-4 bg-[#ffffff] border border-[#21b3f1] text-black w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#21b3f1] focus:ring-offset-2 focus:ring-offset-indigo-200 hover:bg-[#21b3f1] hover:text-white rounded-lg">Add To Wishlist</button>
+                                                className="py-2 px-4 bg-[#ffffff] border border-[#004E64] text-black w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#004E64] focus:ring-offset-2 focus:ring-offset-[#004E64] hover:bg-[#004E64] hover:text-white rounded-lg">Add To Wishlist</button>
 
                                         </div>
                                     </div>

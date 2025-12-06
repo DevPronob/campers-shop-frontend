@@ -1,6 +1,6 @@
 import { baseApi } from "../../baseApi";
 
-const authApi = baseApi.injectEndpoints({
+export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Register
     registerUser: builder.mutation({

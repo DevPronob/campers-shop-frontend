@@ -1,34 +1,55 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Input } from 'antd';
-import { Controller } from 'react-hook-form';
+import { Controller, Control, FieldError } from 'react-hook-form';
 
 type TInputProps = {
-  type: string;
+  control?: Control<any>;
+  type?: string;
   name: string;
   label?: string;
+  placeholder?: string;
   disabled?: boolean;
+  required?: boolean;
+  error?: FieldError;
 };
 
+const CSInput = ({
+  control,
+  type = 'text',
+  name,
+  label,
+  placeholder,
+  disabled = false,
+  required = false,
+  error,
+}: TInputProps) => {
+  const isPassword = type === 'password';
+  const InputComponent = isPassword ? Input.Password : Input;
 
-function CSInput({ type, name, label, disabled }: TInputProps) {
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <Form.Item
+      label={label}
+      required={required}
+      validateStatus={error ? 'error' : ''}
+      help={error?.message}
+      style={{ marginBottom: '20px' }}
+    >
       <Controller
         name={name}
+        control={control}
         render={({ field }) => (
-          <Form.Item label={label}>
-            <Input
-              {...field}
-              type={type}
-              id={name}
-              size="large"
-              disabled={disabled}
-            />
-          </Form.Item>
+          <InputComponent
+            {...field}
+            id={name}
+            size="large"
+            type={type}
+            placeholder={placeholder}
+            disabled={disabled}
+          />
         )}
       />
-    </div>
-  )
-}
+    </Form.Item>
+  );
+};
 
-export default CSInput
+export default CSInput;

@@ -1,4 +1,3 @@
-
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useGetCartQuery } from '@/redux/api/features/cart/cartApi';
@@ -15,12 +14,14 @@ function Payment() {
   const totalAmount = cartTotalAmount(amounts);
 
   return (
-    <div className="min-h-screen bg-gray-100 py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-4xl font-bold text-center text-blue-600 mb-4">Checkout</h1>
-          <p className="text-center text-gray-600 mb-8">
-            Total Amount: <span className="font-semibold">${totalAmount.toFixed(2)}</span>
+    <div className="min-h-screen bg-[#F8F8F8] flex items-center justify-center py-16 px-4 font-poppins">
+      <div className="max-w-3xl w-full">
+        <div className="bg-white rounded-xl shadow-md border border-gray-200 p-10">
+          <h1 className="text-3xl font-bold text-[#004E64] text-center mb-4">
+            Payment
+          </h1>
+          <p className="text-center text-gray-800 mb-6 text-lg">
+            Total Amount: <span className="font-semibold text-[#FF6B35]">${totalAmount.toFixed(2)}</span>
           </p>
           <Elements stripe={stripePromise}>
             <CheckoutForm cart={data || []} price={totalAmount} />

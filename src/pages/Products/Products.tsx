@@ -17,9 +17,10 @@ function Products() {
         sort: sort || undefined,
         searchTerm: search || undefined,
     });
+    console.log(priceRange, 'priceRange');
 
     return (
-        <div className="px-4 md:px-8">
+        <div className="px-4 md:px-8 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-[30%,70%] gap-4">
                 <div>
                     <FilterContainer

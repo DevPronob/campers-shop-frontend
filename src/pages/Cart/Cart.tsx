@@ -194,7 +194,7 @@ function Cart() {
                 <div className="mt-6 text-center">
                   <button disabled={cart.data.length === 0}
   onClick={() => navigate("/checkout",  { state: { cart: cart.data, subtotal, shipping, total } })}
-  className="group inline-flex w-full items-center justify-center rounded-md bg-[#21b3f1] px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow"
+  className="group inline-flex w-full items-center justify-center rounded-md bg-[#004E64] px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow"
 >
   Checkout
   <svg

@@ -120,7 +120,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ price, cart }) => {
           type="submit"
           disabled={!stripe || processing}
           className={`w-full py-3 rounded-md text-white font-semibold transition ${
-            processing ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+            processing ? "bg-gray-400 cursor-not-allowed" : "bg-[#012b36] hover:bg-blue-600"
           }`}
         >
           {processing ? "Processing..." : `Pay $${price.toFixed(2)}`}

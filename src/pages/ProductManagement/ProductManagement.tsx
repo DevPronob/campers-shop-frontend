@@ -1,31 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
-import AddProductModal from '@/components/ui/AddProductModal';
-import DeleteModal from '@/components/ui/DeleteModal';
-import UpdateModel from '@/components/ui/UpdateModel';
-import { useGetProductsWithoutFilterQuery } from '@/redux/api/features/products/productApi';
-import { TProduct } from '@/types/productTypes';
+import { useState } from "react";
+import AddProductModal from "@/components/ui/AddProductModal";
+import DeleteModal from "@/components/ui/DeleteModal";
+import UpdateModel from "@/components/ui/UpdateModel";
+import { useGetProductsWithoutFilterQuery } from "@/redux/api/features/products/productApi";
+import { TProduct } from "@/types/productTypes";
 
 function ProductManagement() {
   const { data } = useGetProductsWithoutFilterQuery(undefined);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
 
-  const openPopup = (product: TProduct) => {
+  const openDelete = (product: TProduct) => {
     setSelectedProduct(product);
-    setIsOpen(true);
+    setIsOpenDelete(true);
   };
 
   const openUpdate = (product: TProduct) => {
-    (document.getElementById('update_modal') as any).showModal();
     setSelectedProduct(product);
     setIsOpenUpdate(true);
   };
 
   const closePopup = () => {
     setSelectedProduct(null);
-    setIsOpen(false);
+    setIsOpenDelete(false);
     setIsOpenUpdate(false);
   };
 
@@ -79,7 +78,7 @@ function ProductManagement() {
                         Update Product
                       </button>
                       <button
-                        onClick={() => openPopup(items)}
+                        onClick={() => openDelete(items)}
                         className="font-medium btn bg-red-700 text-white"
                       >
                         Delete Product
@@ -94,13 +93,10 @@ function ProductManagement() {
       </div>
 
       {isOpenUpdate && selectedProduct && (
-        <UpdateModel
-          productId={selectedProduct._id}
-          closePopup={closePopup}
-        />
+        <UpdateModel productId={selectedProduct._id} closePopup={closePopup} />
       )}
 
-      {isOpen && selectedProduct && (
+      {isOpenDelete && selectedProduct && (
         <DeleteModal items={selectedProduct} closePopup={closePopup} />
       )}
     </div>

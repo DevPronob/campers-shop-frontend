@@ -4,105 +4,109 @@ import CSInput from '@/components/Form/CSInput'
 import { useRegisterUserMutation } from '@/redux/api/features/auth/auth.api'
 import { setUser } from '@/redux/api/features/auth/authSlice'
 import { verifyToken } from '@/utils/verifyToken'
-import { Row, Card, Typography, Button } from 'antd'
+import { Card, Typography, Button } from 'antd'
 import { FieldValues } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, Location } from 'react-router-dom'
 import { toast } from 'sonner'
 
 const { Title, Text } = Typography
 
+// Define the type of location.state
+interface LocationState {
+  from?: {
+    pathname: string
+  }
+}
+
 function Register() {
-    const [register] =useRegisterUserMutation()
-    const neviagte =useNavigate()
-      const dispatch = useDispatch();
-  const handleSubmit = async(data: FieldValues) => {
-    const toastId =toast.loading('Registering...')
-    console.log(data)
+  const [registerUser] = useRegisterUserMutation()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  // Tell TS that location.state has our expected type
+  const location = useLocation() as Location & { state?: LocationState }
+
+  const handleSubmit = async (data: FieldValues) => {
+    const toastId = toast.loading('Registering...')
     try {
-      const res =await   register(data).unwrap()
-       console.log(res.data,"data")
-       const user =verifyToken(res?.data?.accessToken)
-       console.log(user,"user")
-       dispatch(setUser({
-    user:user as any,
-    token: res?.data.accessToken,  
-  }))
-        toast.success('Registered successfully!', {
-            id: toastId,
-            duration:3000
+      const res = await registerUser(data).unwrap()
+      const user = verifyToken(res?.data?.accessToken)
+
+      dispatch(
+        setUser({
+          user: user as any,
+          token: res?.data.accessToken,
         })
-        neviagte("/")
-        
+      )
+
+      toast.success('Registered successfully!', { id: toastId, duration: 3000 })
+
+      // Redirect user to previous page or home
+      const from = location.state?.from?.pathname || '/'
+      navigate(from, { replace: true })
     } catch (error) {
-        console.log(error,"error")
-        toast.error('Failed to register!', {
-            id: toastId,
-            duration:3000
-        })
+      console.error(error)
+      toast.error('Failed to register!', { id: toastId, duration: 3000 })
     }
   }
 
   return (
-  <div className='min-h-screen py-8'>
-      <Row
-      justify="center"
-      align="middle"
-    >
-      <Card
-        style={{
-          width: 500,
-          padding: '24px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-        }}
-      >
-        <Title level={3} style={{ textAlign: 'center', marginBottom: '8px' }}>
-          Create Account
-        </Title>
-        <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginBottom: 24 }}>
-          Please fill in the details to register
-        </Text>
-
-        <CsForm
-          onSubmit={handleSubmit}
-          defaultValues={{ name: '', email: '', password: '', phone: '' }}
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <div className="max-w-md w-full space-y-8">
+        <Card
+          style={{
+            borderRadius: 12,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+            padding: '32px',
+          }}
         >
-          <div style={{ marginBottom: 16 }}>
-            <CSInput type="text" name="name" label="Name" />
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <CSInput type="email" name="email" label="Email" />
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <CSInput type="password" name="password" label="Password" />
-          </div>
-          <div style={{ marginBottom: 24 }}>
-            <CSInput type="text" name="phone" label="Phone" />
+          <div className="text-center mb-6">
+            <Title level={3}>Create Account</Title>
+            <Text type="secondary">
+              Please fill in the details to register
+            </Text>
           </div>
 
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            style={{
-              height: 40,
-              borderRadius: '8px',
-              fontWeight: 500,
-            }}
+          <CsForm
+            onSubmit={handleSubmit}
+            defaultValues={{ name: '', email: '', password: '', phone: '' }}
           >
-            Register
-          </Button>
-        </CsForm>
+            <div className="mb-4">
+              <CSInput type="text" name="name" label="Name" />
+            </div>
+            <div className="mb-4">
+              <CSInput type="email" name="email" label="Email" />
+            </div>
+            <div className="mb-4">
+              <CSInput type="password" name="password" label="Password" />
+            </div>
+            <div className="mb-6">
+              <CSInput type="text" name="phone" label="Phone" />
+            </div>
 
-        <div style={{ textAlign: 'center', marginTop: 16 }}>
-          <Text type="secondary">
-            Already have an account? <a href="/login">Login</a>
-          </Text>
-        </div>
-      </Card>
-    </Row>
-  </div>
+            <Button
+              type="primary"
+              htmlType="submit"
+              size='large'
+              block
+              className="!rounded-lg font-medium !bg-[#004E64] !text-white 
+                hover:!bg-[#006B80] hover:!text-white 
+                focus:!bg-[#006B80] active:!bg-[#003F52] 
+                border-none transition-all duration-300"
+            >
+              Register
+            </Button>
+          </CsForm>
+
+          <div className="text-center mt-6">
+            <Text className=" font-medium">
+              Already have an account? <a className='!text-[#004E64]' href="/login">Login</a>
+            </Text>
+          </div>
+        </Card>
+      </div>
+    </div>
   )
 }
 

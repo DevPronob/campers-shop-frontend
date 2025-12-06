@@ -8,11 +8,10 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { toast } from "sonner";
 import { logout, setUser } from "./features/auth/authSlice";
-import { RootState } from "../store"; // adjust path if needed
+import { RootState } from "../store"; 
 
-// Basic fetch with auth header
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: "https://campers-ecom-backend.vercel.app/api", // ✅ keep consistent prefix
+  baseUrl: "https://campers-ecom-backend.vercel.app/api",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
@@ -23,7 +22,7 @@ const rawBaseQuery = fetchBaseQuery({
   },
 });
 
-// Wrapper for refresh token
+
 const baseQueryWithRefreshToken: BaseQueryFn<
   string | FetchArgs,
   unknown,
@@ -31,7 +30,6 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   let result = await rawBaseQuery(args, api, extraOptions);
 
-  // Handle common errors
   if (result?.error?.status === 404) {
     toast.error((result.error.data as any)?.message || "Not found");
   }
@@ -39,7 +37,6 @@ const baseQueryWithRefreshToken: BaseQueryFn<
     toast.error((result.error.data as any)?.message || "Forbidden");
   }
 
-  // Handle expired token
   if (result?.error?.status === 401) {
     console.log("🔄 Sending refresh token...");
 
@@ -63,7 +60,6 @@ const baseQueryWithRefreshToken: BaseQueryFn<
         })
       );
 
-      // Retry original query with new token
       result = await rawBaseQuery(args, api, extraOptions);
     } else {
       api.dispatch(logout());
@@ -76,8 +72,8 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 // Main API
 export const baseApi = createApi({
   reducerPath: "baseApi",
-  baseQuery: baseQueryWithRefreshToken, // ✅ use wrapper, not rawBaseQuery
-  tagTypes: ["cart", "Product", "payment", "User"],
+  baseQuery: baseQueryWithRefreshToken,
+  tagTypes: ["cart", "Product", "payment", "User","wishlist"],
   endpoints: () => ({}),
 });
 

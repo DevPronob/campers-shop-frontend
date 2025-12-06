@@ -14,6 +14,7 @@ import OrderHistory from "@/pages/OrderHistory.tsx/OrderHisory";
 import UserManagement from "@/pages/UserManagement/UserManagement";
 import PrivateRoute from "@/components/layout/ProctectedRoute";
 import  ProductManagement  from '@/pages/ProductManagement/ProductManagement';
+import Wishlist from "@/pages/Wishlist/Wishlist";
 
 export const router = createBrowserRouter([
     {
@@ -71,6 +72,10 @@ export const router = createBrowserRouter([
              {
                 path: "/users-management",
                 element: <PrivateRoute role="admin"><UserManagement /></PrivateRoute>
+            },
+            {
+                path: "/wishlist",
+                element: <PrivateRoute role="USER"><Wishlist/></PrivateRoute>
             },
         ]
     },
