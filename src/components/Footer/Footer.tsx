@@ -2,7 +2,7 @@ function Footer() {
   return (
     <footer className="bg-gray-950 text-gray-400 mt-0">
       <div className="mx-auto max-w-screen-xl px-6 py-16 grid gap-12 md:grid-cols-2 xl:grid-cols-4 xl:px-10">
-        {/* Brand */}
+        
         <div>
           <h2 className="mb-6 text-2xl font-bold text-white">Elomus</h2>
           <p className="text-sm leading-relaxed">
@@ -10,7 +10,7 @@ function Footer() {
           </p>
         </div>
 
-        {/* Address */}
+        
         <div>
           <h3 className="mb-4 text-lg font-semibold text-white">Address</h3>
           <p className="text-sm leading-relaxed">
@@ -20,7 +20,7 @@ function Footer() {
           </p>
         </div>
 
-        {/* Quick Links */}
+        
         <div>
           <h3 className="mb-4 text-lg font-semibold text-white">Quick Links</h3>
           <ul className="space-y-3 text-sm">
@@ -32,7 +32,7 @@ function Footer() {
           </ul>
         </div>
 
-        {/* Newsletter */}
+        
         <div>
           <h3 className="mb-4 text-lg font-semibold text-white">Newsletter</h3>
           <p className="mb-4 text-sm">Get the latest updates straight to your inbox.</p>
@@ -49,7 +49,7 @@ function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      
       <div className="border-t border-gray-800">
         <div className="mx-auto max-w-screen-xl flex flex-col items-center justify-between px-6 py-6 text-sm md:flex-row xl:px-10">
           <p>© 2025 Elomus. All rights reserved.</p>

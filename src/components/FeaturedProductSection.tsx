@@ -37,7 +37,7 @@ const FeaturedProductSection: React.FC = () => {
 
   return (
     <section className="px-6 md:px-10 lg:px-20 py-10 bg-[#f9f9f9]">
-      {/* Heading */}
+      
       <div className="text-center mb-10">
         <h3 className="text-3xl md:text-4xl font-bold text-[#0B0B0B]">
           Featured <span className="">Products</span>
@@ -47,7 +47,7 @@ const FeaturedProductSection: React.FC = () => {
         </p>
       </div>
 
-      {/* Product Grid */}
+      
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {featured?.length ? (
           featured.map((product: TProduct) => (
@@ -65,7 +65,7 @@ const FeaturedProductSection: React.FC = () => {
         )}
       </div>
 
-      {/* Button */}
+      
       <div className="mt-10 flex justify-center">
         <button
           type="button"

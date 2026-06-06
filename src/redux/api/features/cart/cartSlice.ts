@@ -16,12 +16,10 @@ const cartSlice = createSlice({
         increment: (state) => {
             state.quantity += 1
         },
-        decrement: (state) => {
-            // state.quantity < 0 ? state.quantity = 0
+        decrement: (state) => {
             state.quantity -= 1
         },
-        quantityByPayload: (state, action: PayloadAction<number>) => {
-            // state.quantity < 0 ? state.quantity = 0
+        quantityByPayload: (state, action: PayloadAction<number>) => {
             state.quantity = action.payload
         },
     }

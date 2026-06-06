@@ -14,9 +14,7 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
-
-// Persist configs
+import storage from 'redux-persist/lib/storage'
 const persistAuthConfig = { key: 'auth', storage }
 const persistPaymentConfig = { key: 'payment', storage }
 

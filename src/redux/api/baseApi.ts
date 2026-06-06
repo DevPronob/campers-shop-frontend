@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   BaseQueryFn,
   createApi,
@@ -11,7 +11,7 @@ import { logout, setUser } from "./features/auth/authSlice";
 import { RootState } from "../store"; 
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: "https://campers-ecom-backend.vercel.app/api",
+  baseUrl: "http://localhost:5000/api",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
@@ -69,11 +69,10 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   return result;
 };
 
-// Main API
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithRefreshToken,
-  tagTypes: ["cart", "Product", "payment", "User","wishlist"],
+  tagTypes: ["cart", "Product", "payment", "User","wishlist","review","order"],
   endpoints: () => ({}),
 });
 

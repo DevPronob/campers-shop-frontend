@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useState, useEffect } from "react";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
@@ -32,16 +32,10 @@ const FilterContainer = ({
   const minPrice = prices.length ? Math.min(...prices) : 0;
   const maxPrice = prices.length ? Math.max(...prices) : 1000;
 
-  const [localPrice, setLocalPrice] = useState<number[]>([minPrice, maxPrice]);
- 
-
-
-  // Sync localPrice with parent state
+  const [localPrice, setLocalPrice] = useState<number[]>([minPrice, maxPrice]);
   useEffect(() => {
     setPriceRange(localPrice);
-  }, [localPrice, setPriceRange]);
-
-  // Update localPrice if products change
+  }, [localPrice, setPriceRange]);
   useEffect(() => {
     setLocalPrice([minPrice, maxPrice]);
   }, [minPrice, maxPrice]);

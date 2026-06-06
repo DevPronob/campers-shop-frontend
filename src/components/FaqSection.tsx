@@ -10,7 +10,7 @@ const FaqSection = () => {
     <section className="px-4 md:px-12 py-16 bg-gradient-to-b from-white via-gray-50 to-white">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
         
-        {/* Left Content */}
+        
         <div className="flex-1 md:flex-[3/5]">
           <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-5 tracking-tight">
             Frequently Asked Questions
@@ -75,7 +75,7 @@ const FaqSection = () => {
           </Accordion>
         </div>
 
-        {/* Right Image */}
+        
         <div className="flex-1 md:flex-[2/5]">
           <img
             src="https://i.ibb.co/qphCd8X/blake-wisz-Tcg-ASSD5-G04-unsplash.jpg"

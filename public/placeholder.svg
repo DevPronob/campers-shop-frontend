@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" style="background-color: #0d1e2d; font-family: 'Outfit', 'Inter', sans-serif;">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#07121e" />
+      <stop offset="60%" stop-color="#0f263c" />
+      <stop offset="100%" stop-color="#1b3b5a" />
+    </linearGradient>
+
+    <!-- Mountain Gradient -->
+    <linearGradient id="mountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#142c44" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0a1826" />
+    </linearGradient>
+
+    <!-- Mountain Foreground Gradient -->
+    <linearGradient id="fgMountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c3b5c" />
+      <stop offset="100%" stop-color="#0b1a28" />
+    </linearGradient>
+
+    <!-- Tent Outer Gradient -->
+    <linearGradient id="tentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff9f43" />
+      <stop offset="100%" stop-color="#ee5253" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    
+    <!-- Light Glow Filter for Campfire -->
+    <filter id="fireGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Sky Background -->
+  <rect width="800" height="600" fill="url(#bgGrad)" />
+
+  <!-- Stars -->
+  <g fill="#ffffff" opacity="0.6">
+    <circle cx="120" cy="100" r="1.5" />
+    <circle cx="280" cy="80" r="1" />
+    <circle cx="450" cy="120" r="2" opacity="0.8" />
+    <circle cx="680" cy="90" r="1.5" />
+    <circle cx="720" cy="220" r="1" />
+    <circle cx="180" cy="250" r="2" />
+    <circle cx="340" cy="200" r="1.5" />
+    <circle cx="580" cy="180" r="1" />
+    <circle cx="90" cy="180" r="1" />
+    <circle cx="620" cy="70" r="2.5" opacity="0.9" />
+  </g>
+
+  <!-- Back Mountain Range -->
+  <path d="M-50 480 L180 240 L380 400 L600 180 L850 450 L850 600 L-50 600 Z" fill="url(#mountainGrad)" />
+
+  <!-- Front Mountain Range -->
+  <path d="M100 500 L320 280 L520 440 L700 250 L900 480 L900 600 L100 600 Z" fill="url(#fgMountainGrad)" opacity="0.95" />
+
+  <!-- Moon / Celestial Glow -->
+  <circle cx="400" cy="180" r="70" fill="#ffffff" opacity="0.03" filter="url(#glow)" />
+  <circle cx="400" cy="180" r="45" fill="#ffffff" opacity="0.08" />
+
+  <!-- Pine Trees Silhouette (Left) -->
+  <g fill="#061019">
+    <!-- Tree 1 -->
+    <path d="M80 500 L60 440 L65 440 L50 400 L55 400 L40 360 L48 360 L35 320 L52 320 L42 280 L58 280 L48 240 L52 240 L62 280 L52 280 L62 320 L45 320 L58 360 L50 360 L65 400 L60 400 L75 440 L80 440 Z" />
+    <!-- Tree 2 -->
+    <path d="M130 520 L110 450 L115 450 L100 400 L105 400 L90 350 L98 350 L85 300 L102 300 L92 250 L108 250 L100 210 L104 210 L114 250 L104 250 L114 300 L97 300 L110 350 L102 350 L117 400 L112 400 L127 450 L132 450 Z" />
+  </g>
+
+  <!-- Pine Trees Silhouette (Right) -->
+  <g fill="#050d15">
+    <!-- Tree 3 -->
+    <path d="M700 500 L680 440 L685 440 L670 400 L675 400 L660 360 L668 360 L655 320 L672 320 L662 280 L678 280 L668 240 L672 240 L682 280 L672 280 L682 320 L665 320 L678 360 L670 360 L685 400 L680 400 L695 440 L700 440 Z" />
+  </g>
+
+  <!-- Campfire Glow -->
+  <circle cx="400" cy="460" r="80" fill="#ff9f43" opacity="0.12" filter="url(#fireGlow)" />
+  <circle cx="400" cy="460" r="40" fill="#ff6b6b" opacity="0.2" filter="url(#fireGlow)" />
+
+  <!-- Styled Tent -->
+  <g transform="translate(260, 370)">
+    <!-- Base shadow -->
+    <ellipse cx="60" cy="110" rx="90" ry="12" fill="#040b12" opacity="0.6" />
+    
+    <!-- Tent Main Body (Triangle) -->
+    <polygon points="60,0 -10,105 130,105" fill="url(#tentGrad)" />
+    
+    <!-- Tent Inner Shadow / Side -->
+    <polygon points="60,0 60,105 130,105" fill="#000000" opacity="0.15" />
+    
+    <!-- Tent Opening (Flaps) -->
+    <polygon points="60,20 20,105 100,105" fill="#2d3436" />
+    
+    <!-- Glow inside tent -->
+    <polygon points="60,25 35,105 85,105" fill="#feca57" opacity="0.8" filter="url(#glow)" />
+    
+    <!-- Open flap folds -->
+    <polygon points="60,20 60,105 20,105" fill="#ff9f43" opacity="0.9" />
+    <polygon points="60,20 60,105 100,105" fill="#ee5253" opacity="0.9" />
+  </g>
+
+  <!-- Campfire Logs -->
+  <g transform="translate(370, 470)">
+    <rect x="-10" y="5" width="80" height="12" rx="4" transform="rotate(-15)" fill="#5c3d2e" />
+    <rect x="-10" y="5" width="80" height="12" rx="4" transform="rotate(15 60 5)" fill="#442c21" />
+  </g>
+
+  <!-- Campfire Flames -->
+  <g transform="translate(390, 435)" filter="url(#glow)">
+    <!-- Outer Flame -->
+    <path d="M10 40 C-10 20 -5 0 10 -15 C25 0 30 20 10 40 Z" fill="#ff7675" />
+    <!-- Mid Flame -->
+    <path d="M10 40 C0 25 0 10 10 0 C20 10 20 25 10 40 Z" fill="#ffbe76" />
+    <!-- Core Flame -->
+    <path d="M10 40 C5 30 5 20 10 12 C15 20 15 30 10 40 Z" fill="#fff200" />
+  </g>
+
+  <!-- Ground / Forest Floor -->
+  <rect x="0" y="480" width="800" height="120" fill="#07131e" />
+  <path d="M0 480 Q 200 475, 400 480 T 800 480 L800 600 L0 600 Z" fill="#0b1d2e" />
+
+  <!-- Sleek branding overlay & info text -->
+  <g text-anchor="middle">
+    <!-- Branding -->
+    <text x="400" y="535" fill="#ffffff" font-size="22" font-weight="700" letter-spacing="3" opacity="0.9">CAMPERS SHOP</text>
+    
+    <!-- Secondary status message -->
+    <text x="400" y="562" fill="#ff9f43" font-size="13" font-weight="600" letter-spacing="1.5" opacity="0.8">IMAGE TEMPORARILY OFFLINE</text>
+  </g>
+
+  <!-- Modern Icon Badge (top right) -->
+  <g transform="translate(720, 30)" opacity="0.3">
+    <circle cx="25" cy="25" r="22" fill="none" stroke="#ffffff" stroke-width="1.5" />
+    <path d="M16 32 L25 16 L34 32 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" />
+    <path d="M21 32 L25 24 L29 32 Z" fill="#ffffff" opacity="0.7" />
+  </g>
+</svg>

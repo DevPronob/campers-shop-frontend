@@ -1,224 +1,330 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCreateCartMutation } from '@/redux/api/features/cart/cartApi';
-import { decrement, increment } from '@/redux/api/features/cart/cartSlice';
-import { useGetSingleProductsQuery } from '@/redux/api/features/products/productApi';
-import { RootState } from '@/redux/store';
-import  { useState } from 'react'
 
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
+import { Star } from "lucide-react";
+import { Button, Popconfirm } from "antd";
 
+import { RootState } from "@/redux/store";
+import { increment, decrement } from "@/redux/api/features/cart/cartSlice";
+import { useCreateCartMutation } from "@/redux/api/features/cart/cartApi";
+import { useGetSingleProductsQuery } from "@/redux/api/features/products/productApi";
+import { useAddToWishlistMutation } from "@/redux/api/features/wishlist/wishlist.api";
+import {
+  useCreateReviewMutation,
+  useGetReviewsByProductQuery,
+  useDeleteReviewMutation,
+  useUpdateReviewMutation,
+} from "@/redux/api/features/review/review.api";
 
 function ProductsDetail() {
-    const [productSlider, setProductslider] = useState(0);
-    const { id } = useParams();
-    const { data: detailProduct, error, isLoading } = useGetSingleProductsQuery(id);
-    const cartQuantity = useSelector((state:RootState) => state.cart.quantity);
-    const dispatch = useDispatch();
-    const [createCart, { data }] = useCreateCartMutation(undefined);
+  const { id } = useParams();
+  const dispatch = useDispatch();
 
-const handleCart = async () => {
-  if (!detailProduct?.data?._id) {
-    console.error("Product ID is missing");
-    return;
+  const [productSlider, setProductSlider] = useState(0);
+  const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+
+  const cartQuantity = useSelector(
+    (state: RootState) => state.cart.quantity
+  );
+
+  const { data: detailProduct, isLoading } = useGetSingleProductsQuery(id);
+  const { data: reviewsData, refetch } = useGetReviewsByProductQuery(detailProduct?.data?._id);
+
+  const [createCart] = useCreateCartMutation();
+  const [addToWishlist] = useAddToWishlistMutation();
+  const [createReview] = useCreateReviewMutation();
+  const [deleteReview] = useDeleteReviewMutation();
+  const [updateReview] = useUpdateReviewMutation();
+
+  
+  const handleCart = async () => {
+    try {
+     const res = await createCart({
+        productId: detailProduct?.data?._id,
+        quantity: cartQuantity || 1,
+      }).unwrap();
+      console.log(res,"res from add to cart");
+      console.log(detailProduct?.data?._id,cartQuantity,"res from add to cart")
+
+      toast.success("Product added to cart");
+    } catch(err) {
+      console.log(err);
+      toast.error("Failed to add product to cart");
+    }
+  };
+
+  
+  const handleWishlist = async () => {
+    try {
+      await addToWishlist({
+        id: detailProduct?.data?._id,
+      }).unwrap();
+
+      toast.success("Added to wishlist");
+    } catch {
+      toast.error("Failed to add to wishlist");
+    }
+  };
+
+  
+  const handleReviewSubmit = async () => {
+    if (!rating || !reviewText) {
+      return toast.error("Rating & review required");
+    }
+
+    try {
+      if (editingReviewId) {
+        await updateReview({
+          id: editingReviewId,
+          rating,
+          comment: reviewText,
+        }).unwrap();
+        toast.success("Review updated");
+      } else {
+        await createReview({
+          productId: detailProduct?.data?._id,
+          rating,
+          comment: reviewText,
+        }).unwrap();
+        toast.success("Review submitted");
+      }
+
+      setRating(0);
+      setReviewText("");
+      setEditingReviewId(null);
+      refetch();
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to submit review");
+    }
+  };
+
+  
+  const handleDeleteReview = async (reviewId: string) => {
+    try {
+      await deleteReview(reviewId).unwrap();
+      toast.success("Review deleted");
+      refetch();
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to delete review");
+    }
+  };
+
+  if (isLoading) {
+    return <p className="text-center py-10">Loading...</p>;
   }
 
-  try {
-    const payload = {
-      productId: detailProduct.data._id,
-      quantity: cartQuantity || 1,
-    };
-    console.log(payload)
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      
+      <section className="max-w-6xl mx-auto px-4 py-10">
+        <div className="grid md:grid-cols-2 gap-10">
+          
+          <div>
+            <img
+              src={detailProduct?.data?.imageUrls?.[productSlider] || '/placeholder.svg'}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/placeholder.svg';
+              }}
+              className="w-full rounded-lg shadow-md"
+              alt={detailProduct?.data?.name || 'Product Image'}
+            />
+            {detailProduct?.data?.imageUrls && detailProduct?.data?.imageUrls.length > 0 && (
+              <div className="flex gap-2 mt-4">
+                {detailProduct?.data?.imageUrls?.map((img: string, idx: number) => (
+                  <img
+                    key={idx}
+                    src={img || '/placeholder.svg'}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/placeholder.svg';
+                    }}
+                    onClick={() => setProductSlider(idx)}
+                    className="w-20 h-20 cursor-pointer border rounded hover:scale-105 transition-transform"
+                    alt={`Product thumbnail ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
 
+          
+          <div>
+            <h1 className="text-3xl font-bold mb-2">{detailProduct?.data?.name}</h1>
+            <p className="text-gray-600 mb-4">{detailProduct?.data?.description}</p>
+            <p className="text-xl font-semibold text-[#FF6B35] mb-2">${detailProduct?.data?.price}</p>
+            <p className="mb-4">Stock: {detailProduct?.data?.stock}</p>
 
-    const res = await createCart(payload).unwrap();
-    console.log("Cart created:", res);
-   if(res?.success){
-    toast.success("Product Added to Cart Successfully");
-   }
-  } catch (err: any) {
-    console.error("Failed to add product to cart", err?.data || err);
-    toast.error("Failed Product Added to Cart");
-  }
-};
-    if (isLoading) {
-        return < div role="status" >
-            <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
-            </svg>
-            <span className="sr-only">Loading...</span>
-        </div >
-    }
-
-    if (error) {
-        toast.error("Failed Product Added to Cart")
-    }
-    if (data) {
-        toast.success("Product Added to Cart Successfully")
-    }
-
-    return (
-        <div>
-            <div>
-                <section className="overflow-hidden bg-white pb-11 font-poppins dark:bg-gray-800">
-                    <div className="max-w-6xl px-4 py-4 mx-auto lg:py-8 md:px-6">
-                        <div className="flex flex-wrap -mx-4">
-                            <div className="w-full px-4 md:w-1/2 ">
-                                <div className="sticky top-0 z-20 overflow-hidden ">
-                                    <div className="relative mb-6 lg:mb-10 lg:h-2/4 ">
-                                        <img src={detailProduct?.data.imageUrls[productSlider]} alt=""
-                                            className="object-cover w-full lg:h-full " />
-                                    </div>
-                                    <div className="flex-wrap hidden md:flex ">
-                                        {
-                                            detailProduct?.data.imageUrls?.map((item:string, index:number) => (
-                                                <div className="w-1/2 p-2 sm:w-1/4">
-                                                    <div
-                                                        className="block border border-[#004E64] dark:border-transparent dark:hover:border-[#004E64] hover:border-[#004E64] cursor-pointer">
-                                                        <img onClick={() => setProductslider(index)} src={item} alt=""
-                                                            className="object-cover w-full lg:h-20" />
-                                                    </div>
-                                                </div>
-                                            ))
-                                        }
-
-                                        {/* <div className="w-1/2 p-2 sm:w-1/4">
-                                <a href="#"
-                                    className="block border border-transparent dark:border-transparent dark:hover:border-blue-300 hover:border-blue-300">
-                                    <img src="https://i.postimg.cc/PqYpFTfy/pexels-melvin-buezo-2529148.jpg" alt=""
-                                        className="object-cover w-full lg:h-20"/>
-                                </a>
-                            </div>
-                            <div className="w-1/2 p-2 sm:w-1/4">
-                                <a href="#"
-                                    className="block border border-transparent dark:border-transparent dark:hover:border-blue-300 hover:border-blue-300">
-                                    <img src="https://i.postimg.cc/PqYpFTfy/pexels-melvin-buezo-2529148.jpg" alt=""
-                                        className="object-cover w-full lg:h-20"/>
-                                </a>
-                            </div>
-                            <div className="w-1/2 p-2 sm:w-1/4">
-                                <a href="#"
-                                    className="block border border-transparent dark:border-transparent dark:hover:border-blue-300 hover:border-blue-300">
-                                    <img src="https://i.postimg.cc/PqYpFTfy/pexels-melvin-buezo-2529148.jpg" alt=""
-                                        className="object-cover w-full lg:h-20"/>
-                                </a>
-                            </div> */}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="w-full px-4 md:w-1/2 ">
-                                <div className="lg:pl-20">
-                                    <div className="mb-8 ">
-                                        <h2 className="max-w-xl mt-2 mb-6 text-2xl font-bold dark:text-gray-400 md:text-4xl">
-                                            {detailProduct?.data.name}</h2>
-                                        <div className="flex items-center">
-                                            {/* <ul className="flex mr-2">
-                                                <Stack spacing={1}>
-                                                    <Rating name="size-small" value={detailProduct?.reviews} size="small" />
-                                                </Stack>
-                                            </ul> */}
-
-                                        </div>
-                                        <p className="max-w-md mb-8 text-gray-700 text-[15px]">
-                                            {detailProduct?.data.description}
-                                        </p>
-
-                                        <p className="inline-block font-bold text-[#FF6B35] mb-4">
-                                            {/* <span>{detailProduct?.offerPrice}</span> */}
-                                            <span
-                                                className="text-[16px] font-bold">${detailProduct?.data.price}</span>
-                                        </p>
-
-
-
-                                        <p className="text-sm">{`${detailProduct?.data.stock} in stock`}</p>
-                                    </div>
-                                    <div className="flex items-center ">
-                                        {/* <h2 className="w-16 mr-6 text-xl font-bold dark:text-gray-400">
-                                Colors:</h2>
-                            <div className="flex flex-wrap -mx-2 -mb-2">
-                               
-                                <button
-                                    className="p-1 mb-2 mr-2 border border-transparent hover:border-blue-400 dark:border-gray-800 dark:hover:border-gray-400 ">
-                                    <div className="w-6 h-6 bg-cyan-300"></div>
-                                </button>
-                                <button
-                                    className="p-1 mb-2 mr-2 border border-transparent hover:border-blue-400 dark:border-gray-800 dark:hover:border-gray-400">
-                                    <div className="w-6 h-6 bg-green-300 "></div>
-                                </button>
-                                <button
-                                    className="p-1 mb-2 border border-transparent hover:border-blue-400 dark:border-gray-800 dark:hover:border-gray-400">
-                                    <div className="w-6 h-6 bg-red-200 "></div>
-                                </button>
-                            </div> */}
-                                    </div>
-                                    <div className="flex items-center mb-8">
-                                        <h2 className="w-16 text-xl font-bold dark:text-gray-400">
-                                            Size:</h2>
-                                        <div className="flex flex-wrap -mx-2 -mb-1">
-                                            {detailProduct?.size}
-                                            {/* <button
-                                    className="py-1 mb-2 mr-1 border w-11 hover:border-blue-400 dark:border-gray-400 hover:text-blue-600 dark:hover:border-gray-300 dark:text-gray-400">XL
-                                </button>
-                                <button
-                                    className="py-1 mb-2 mr-1 border w-11 hover:border-blue-400 hover:text-blue-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400">S
-                                </button>
-                                <button
-                                    className="py-1 mb-2 mr-1 border w-11 hover:border-blue-400 hover:text-blue-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400">M
-                                </button>
-                                <button
-                                    className="py-1 mb-2 mr-1 border w-11 hover:border-blue-400 hover:text-blue-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400">XS
-                                </button> */}
-                                        </div>
-                                    </div>
-                                    <div className="w-32 mb-8 ">
-                                        <label 
-                                            className="w-full text-xl font-semibold text-gray-700 dark:text-gray-400">Quantity</label>
-                                        <div className="relative flex flex-row w-full h-10 mt-4 bg-transparent rounded-lg">
-                                            <button
-                                                onClick={() => dispatch(decrement())}
-                                                className="w-20 h-full text-gray-600 bg-gray-300 rounded-l outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-700 dark:bg-gray-900 hover:bg-gray-400">
-                                                <span className="m-auto text-2xl font-thin">-</span>
-                                            </button>
-                                            <input type="number"
-                                                min="0"
-
-                                                className="flex items-center w-full font-semibold text-center text-gray-700 placeholder-gray-700 bg-gray-300 outline-none dark:text-gray-400 dark:placeholder-gray-400 dark:bg-gray-900 focus:outline-none text-md hover:text-black"
-                                                value={cartQuantity} />
-                                            <button onClick={() => dispatch(increment())}
-                                                className="w-20 h-full text-gray-600 bg-gray-300 rounded-r outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-400">
-                                                <span className="m-auto text-2xl font-thin">+</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-wrap items-center -mx-4 ">
-                                        <div className="w-full px-4 mb-4 lg:w-1/2 lg:mb-0">
-
-                                            {detailProduct?.data.stock > 1 ?
-                                                <button onClick={handleCart} type="button"
-                                                    className="py-2 px-4 bg-[#ffffff] border border-[#004E64] text-black w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#004E64] focus:ring-offset-2 focus:ring-offset-[#004E64] hover:bg-[#004E64] hover:text-white rounded-lg">Add To Cart</button>
-                                                :
-                                                <button disabled={true} type="button"
-                                                    className="py-2 px-4 bg-[#ffffff] border border-[#004E64] text-black w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#004E64] focus:ring-offset-2 focus:ring-offset-[#004E64] hover:bg-[#004E64] hover:text-white rounded-lg">Add To Cart</button>
-                                            }
-
-                                        </div>
-                                        <div className="w-full px-4 mb-4 lg:mb-0 lg:w-1/2">
-                                            <button type="button"
-                                                className="py-2 px-4 bg-[#ffffff] border border-[#004E64] text-black w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#004E64] focus:ring-offset-2 focus:ring-offset-[#004E64] hover:bg-[#004E64] hover:text-white rounded-lg">Add To Wishlist</button>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+            
+            <div className="flex items-center gap-4 mb-6">
+              <button
+                onClick={() => dispatch(decrement())}
+                className="px-4 py-1 border rounded hover:bg-gray-200"
+              >
+                -
+              </button>
+              <span className="font-medium">{cartQuantity}</span>
+              <button
+                onClick={() => dispatch(increment())}
+                className="px-4 py-1 border rounded hover:bg-gray-200"
+              >
+                +
+              </button>
             </div>
+
+            <div className="flex gap-4">
+              <button
+                onClick={handleCart}
+                className="px-6 py-2 border border-[#004E64] hover:bg-[#004E64] hover:text-white rounded transition"
+              >
+                Add to Cart
+              </button>
+              <button
+                onClick={handleWishlist}
+                className="px-6 py-2 border border-[#004E64] hover:bg-[#004E64] hover:text-white rounded transition"
+              >
+                Wishlist
+              </button>
+            </div>
+          </div>
         </div>
-    )
+      </section>
+
+      
+      <section className="max-w-6xl mx-auto px-4 py-10">
+        <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+
+        
+        <div className="flex items-center gap-2 mb-6">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Star
+              key={i}
+              size={20}
+              className={
+                i <= (reviewsData?.averageRating || 0)
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "text-gray-300"
+              }
+            />
+          ))}
+          <span className="text-sm text-gray-600">
+            ({reviewsData?.data?.length || 0} reviews)
+          </span>
+        </div>
+
+        
+        <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+          <h3 className="text-lg font-semibold mb-4">
+            {editingReviewId ? "Update Your Review" : "Share Your Experience"}
+          </h3>
+
+          <div className="flex items-center gap-2 mb-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Star
+                key={i}
+                size={24}
+                onClick={() => setRating(i)}
+                className={`cursor-pointer transition-colors duration-200 ${
+                  i <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                }`}
+              />
+            ))}
+          </div>
+
+          <input
+            type="text"
+            value={reviewText}
+            onChange={(e) => setReviewText(e.target.value)}
+            placeholder="Write your review here..."
+            className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-[#004E64] focus:outline-none mb-4"
+          />
+
+          <div className="flex gap-2">
+            <button
+              onClick={handleReviewSubmit}
+              className="px-6 py-2 bg-[#004E64] text-white font-medium rounded-md hover:bg-[#003644] transition-colors"
+            >
+              {editingReviewId ? "Update Review" : "Submit Review"}
+            </button>
+            {editingReviewId && (
+              <button
+                onClick={() => {
+                  setEditingReviewId(null);
+                  setReviewText("");
+                  setRating(0);
+                }}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </div>
+
+        
+        <div className="space-y-4">
+          {reviewsData?.data?.length ? (
+            reviewsData.data.map((r: any) => (
+              <div
+                key={r._id}
+                className="bg-white shadow rounded-lg p-5 flex flex-col gap-3"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold">{r.userId?.name}</p>
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star
+                        key={i}
+                        size={16}
+                        className={
+                          i <= r.rating
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-gray-300"
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <p className="text-gray-700 text-sm">{r.comment}</p>
+
+                <div className="flex justify-end gap-2">
+                  <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => {
+                      setEditingReviewId(r._id);
+                      setReviewText(r.comment);
+                      setRating(r.rating);
+                    }}
+                  >
+                    Edit
+                  </Button>
+
+                  <Popconfirm
+                    title="Are you sure to delete this review?"
+                    onConfirm={() => handleDeleteReview(r._id)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button type="default" danger size="small">
+                      Delete
+                    </Button>
+                  </Popconfirm>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center">No reviews yet</p>
+          )}
+        </div>
+      </section>
+    </div>
+  );
 }
 
-export default ProductsDetail
+export default ProductsDetail;

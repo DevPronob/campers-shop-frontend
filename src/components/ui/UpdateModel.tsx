@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import {
   useGetSingleProductsQuery,
@@ -12,37 +11,68 @@ interface UpdateModelProps {
   closePopup: () => void;
 }
 
-function UpdateModel({ productId, closePopup }: UpdateModelProps) {
+function UpdateModel({
+  productId,
+  closePopup,
+}: UpdateModelProps) {
   const [name, setName] = useState("");
-  const [price, setPrice] = useState<any>();
+  const [price, setPrice] = useState<number>(0);
   const [category, setCategory] = useState("");
-  const [stock, setStock] = useState<any>();
-  const [rating, setRatings] = useState<any>();
+  const [stock, setStock] = useState<number>(0);
+  const [rating, setRatings] = useState<number>(0);
   const [description, setDescription] = useState("");
-  const [selectedImages, setSelectedImages] = useState<any[]>([]);
+
+  const [selectedImages, setSelectedImages] = useState<File[]>(
+    []
+  );
+  const [imagePreviews, setImagePreviews] = useState<
+    string[]
+  >([]);
 
   const { data: product, error, isLoading } =
     useGetSingleProductsQuery(productId);
-  const [updateProducts] = useUpdateProductsMutation();
+
+  const [updateProducts] =
+    useUpdateProductsMutation();
 
   useEffect(() => {
-    if (product) {
-      setName(product?.data?.name);
-      setPrice(product?.data?.price);
-      setCategory(product?.data?.category);
-      setStock(product?.data?.stock);
-      setRatings(product?.data?.ratings);
-      setDescription(product?.data?.description);
+    if (product?.data) {
+      setName(product.data.name);
+      setPrice(product.data.price);
+      setCategory(product.data.category);
+      setStock(product.data.stock);
+      setRatings(product.data.ratings);
+      setDescription(product.data.description);
     }
   }, [product]);
 
-  const handleImageChange = (event: any) => {
-    const files = event.target.files;
-    const imageArray: any = Array.from(files);
-    setSelectedImages(imageArray);
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach((preview) =>
+        URL.revokeObjectURL(preview)
+      );
+    };
+  }, [imagePreviews]);
+
+  const handleImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = Array.from(
+      event.target.files || []
+    );
+
+    setSelectedImages(files);
+
+    const previews = files.map((file) =>
+      URL.createObjectURL(file)
+    );
+
+    setImagePreviews(previews);
   };
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
 
     try {
@@ -50,10 +80,12 @@ function UpdateModel({ productId, closePopup }: UpdateModelProps) {
         selectedImages.map(async (image) => {
           const formData = new FormData();
           formData.append("image", image);
+
           const response = await axios.post(
             "https://api.imgbb.com/1/upload?key=3865938eefff3a14cd02acc91c1d32e1",
             formData
           );
+
           return response.data.data.url;
         })
       );
@@ -63,7 +95,7 @@ function UpdateModel({ productId, closePopup }: UpdateModelProps) {
         price,
         category,
         stock,
-        rating,
+        ratings: rating,
         description,
       };
 
@@ -74,115 +106,277 @@ function UpdateModel({ productId, closePopup }: UpdateModelProps) {
       await updateProducts({
         id: productId,
         ...updatedProduct,
-      });
+      }).unwrap();
 
-      toast.success("Product updated successfully");
+      toast.success(
+        "Product updated successfully"
+      );
+
       closePopup();
     } catch (err) {
-      toast.error("There was an error updating the product");
+      console.error(err);
+      toast.error(
+        "There was an error updating the product"
+      );
     }
   };
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center p-6">Loading...</div>
+      <div className="flex justify-center items-center p-10">
+        Loading...
+      </div>
     );
   }
+
   if (error) {
-    toast.error("Failed to load product data");
+    return (
+      <div className="flex justify-center items-center p-10">
+        Failed to load product data
+      </div>
+    );
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-lg relative flex flex-col max-h-[90vh]">
-        {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10">
-          <h2 className="text-lg font-semibold">Update Product</h2>
-          <button
-            type="button"
-            className="btn btn-sm btn-circle btn-ghost"
-            onClick={closePopup}
-          >
-            ✕
-          </button>
+    <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center p-4">
+      <div className="bg-base-100 rounded-3xl shadow-2xl max-w-3xl w-full p-8 relative max-h-[90vh] overflow-y-auto">
+
+        <button
+          type="button"
+          className="btn btn-circle btn-ghost absolute right-4 top-4"
+          onClick={closePopup}
+        >
+          ✕
+        </button>
+
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold">
+            Update Product
+          </h2>
+
+          <p className="text-gray-500 mt-2">
+            Modify your product details
+          </p>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="overflow-y-auto p-6">
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-3">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5"
+        >
+          <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-semibold">Name</label>
+              <label className="label font-medium">
+                Product Name
+              </label>
+
               <input
                 type="text"
-                className="input w-full input-bordered my-2"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) =>
+                  setName(e.target.value)
+                }
+                className="input input-bordered w-full"
                 required
               />
             </div>
 
             <div>
-              <label className="text-sm font-semibold">Price</label>
-              <input
-                type="number"
-                className="input w-full input-bordered my-2"
-                value={price}
-                onChange={(e) => setPrice(Number(e.target.value))}
-                required
-              />
-            </div>
+              <label className="label font-medium">
+                Category
+              </label>
 
-            <div>
-              <label className="text-sm font-semibold">Category</label>
               <input
                 type="text"
-                className="input w-full input-bordered my-2"
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) =>
+                  setCategory(e.target.value)
+                }
+                className="input input-bordered w-full"
                 required
               />
             </div>
+          </div>
 
+          <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="text-sm font-semibold">Stock</label>
+              <label className="label font-medium">
+                Price ($)
+              </label>
+
               <input
                 type="number"
-                className="input w-full input-bordered my-2"
+                value={price}
+                onChange={(e) =>
+                  setPrice(Number(e.target.value))
+                }
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="label font-medium">
+                Stock
+              </label>
+
+              <input
+                type="number"
                 value={stock}
-                onChange={(e) => setStock(Number(e.target.value))}
+                onChange={(e) =>
+                  setStock(Number(e.target.value))
+                }
+                className="input input-bordered w-full"
                 required
               />
             </div>
 
             <div>
-              <label className="text-sm font-semibold">Description</label>
+              <label className="label font-medium">
+                Rating
+              </label>
+
               <input
-                type="text"
-                className="input w-full input-bordered my-2"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                type="number"
+                step="0.1"
+                value={rating}
+                onChange={(e) =>
+                  setRatings(
+                    Number(e.target.value)
+                  )
+                }
+                className="input input-bordered w-full"
                 required
               />
             </div>
+          </div>
 
-            <div>
+          <div>
+            <label className="label font-medium">
+              Description
+            </label>
+
+            <textarea
+              rows={4}
+              value={description}
+              onChange={(e) =>
+                setDescription(
+                  e.target.value
+                )
+              }
+              className="textarea textarea-bordered w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="label font-medium">
+              Product Images
+            </label>
+
+            <label
+              htmlFor="updateImages"
+              className="border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition"
+            >
+              <p className="font-medium">
+                Click to upload new images
+              </p>
+
+              <p className="text-sm text-gray-500">
+                PNG, JPG, WEBP supported
+              </p>
+
+              {selectedImages.length > 0 && (
+                <p className="mt-3 text-primary font-semibold">
+                  {selectedImages.length} image(s)
+                  selected
+                </p>
+              )}
+
               <input
+                id="updateImages"
                 type="file"
-                className="file-input file-input-bordered w-full"
-                multiple
                 accept="image/*"
+                multiple
+                className="hidden"
                 onChange={handleImageChange}
               />
-            </div>
+            </label>
 
+            {imagePreviews.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
+                {imagePreviews.map(
+                  (preview, index) => (
+                    <div
+                      key={index}
+                      className="relative rounded-xl overflow-hidden border shadow-sm"
+                    >
+                      <img
+                        src={preview}
+                        alt={`Preview ${index}`}
+                        className="w-full h-32 object-cover"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const imgs = [
+                            ...selectedImages,
+                          ];
+
+                          const previews = [
+                            ...imagePreviews,
+                          ];
+
+                          imgs.splice(
+                            index,
+                            1
+                          );
+
+                          previews.splice(
+                            index,
+                            1
+                          );
+
+                          setSelectedImages(
+                            imgs
+                          );
+
+                          setImagePreviews(
+                            previews
+                          );
+                        }}
+                        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500 text-white"
+                      >
+                        ✕
+                      </button>
+
+                      <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                        {index + 1}
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-3 pt-4">
             <button
-              className="btn bg-[#21b3f1] text-white w-full mt-4"
               type="submit"
+              className="btn flex-1 !bg-[var(--accent-primary-bg)] text-white border-none"
             >
               Update Product
             </button>
-          </form>
-        </div>
+
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={closePopup}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

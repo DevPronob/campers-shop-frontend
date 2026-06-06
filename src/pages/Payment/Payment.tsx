@@ -13,6 +13,8 @@ function Payment() {
   const amounts = getAmounts(data);
   const totalAmount = cartTotalAmount(amounts);
 
+  console.log('Cart Data:', data);
+
   return (
     <div className="min-h-screen bg-[#F8F8F8] flex items-center justify-center py-16 px-4 font-poppins">
       <div className="max-w-3xl w-full">

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useGetWishlistQuery, useRemoveFromWishlistMutation } from "@/redux/api/features/wishlist/wishlist.api";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -37,7 +37,7 @@ export default function Wishlist() {
                 key={item._id}
                 className="bg-white rounded-xl shadow-md hover:shadow-xl transition p-4 relative border border-gray-100"
               >
-                {/* Remove button */}
+                
                 <button
                   onClick={() => handleRemove(item._id)}
                   className="absolute top-3 right-3 p-2 rounded-full hover:bg-red-100 text-gray-500 hover:text-red-600"
@@ -45,14 +45,17 @@ export default function Wishlist() {
                   ✕
                 </button>
 
-                {/* Image */}
+                
                 <img
-                  src={item.productId?.imageUrls?.[0]}
-                  alt={item.productId?.name}
+                  src={item.productId?.imageUrls?.[0] || '/placeholder.svg'}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/placeholder.svg';
+                  }}
+                  alt={item.productId?.name || 'Product Image'}
                   className="w-full h-48 object-cover rounded-lg"
                 />
 
-                {/* Info */}
+                
                 <h2 className="mt-4 text-lg font-semibold text-gray-900">
                   {item.productId?.name}
                 </h2>
@@ -61,7 +64,7 @@ export default function Wishlist() {
                   ${item.productId?.price}
                 </p>
 
-                {/* Buttons */}
+                
                 <div className="mt-4 flex gap-3">
                   <button
                     onClick={() =>

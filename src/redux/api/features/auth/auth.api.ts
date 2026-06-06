@@ -1,8 +1,7 @@
 import { baseApi } from "../../baseApi";
 
 export const authApi = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
-    // Register
+  endpoints: (builder) => ({
     registerUser: builder.mutation({
       query: (body) => ({
         url: "/user/register",
@@ -10,9 +9,7 @@ export const authApi = baseApi.injectEndpoints({
         body,
       }),
       invalidatesTags: ["User"],
-    }),
-
-    // Login
+    }),
     loginUser: builder.mutation({
       query: (body) => ({
         url: "/user/login",
@@ -20,21 +17,17 @@ export const authApi = baseApi.injectEndpoints({
         body,
       }),
       invalidatesTags: ["User"],
-    }),
-
-    // Current User
+    }),
     getMe: builder.query({
       query: () => ({
-        url: "/user/me", // ✅ usually better to use `/user/me` endpoint
+        url: "/user/me",
         method: "GET",
       }),
       providesTags: ["User"],
     }),
   }),
   overrideExisting: false,
-});
-
-// Export hooks
+});
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,

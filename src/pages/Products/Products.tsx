@@ -1,11 +1,11 @@
 import  { useState } from 'react';
 import ProductCard from '../../components/ui/ProductCard';
 import FilterContainer from '@/components/ui/FilterContainer';
-import { useGetProductsQuery } from '@/redux/api/features/products/productApi'; // Assuming Product type definition
+import { useGetProductsQuery } from '@/redux/api/features/products/productApi';
 import { TProduct } from '@/types/productTypes';
 
 function Products() {
-    const [priceRange, setPriceRange] = useState([10, 100]); // Adjusted default price range
+    const [priceRange, setPriceRange] = useState([10, 100]);
     const [category, setCategory] = useState('');
     const [search, setSearch] = useState('');
     const [sort, setSort] = useState('name');
@@ -20,7 +20,7 @@ function Products() {
     console.log(priceRange, 'priceRange');
 
     return (
-        <div className="px-4 md:px-8 mt-4">
+        <div className="px-4 md:px-8 mt-4 mb-4">
             <div className="grid grid-cols-1 md:grid-cols-[30%,70%] gap-4">
                 <div>
                     <FilterContainer

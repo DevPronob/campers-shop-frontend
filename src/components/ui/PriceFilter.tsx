@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useState, useEffect } from "react";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 
 const PriceFilter = ({ minPrice, maxPrice, onPriceChange }: any) => {
-  const [priceRange, setPriceRange] = useState<number[]>([minPrice, maxPrice]);
-
-  // Send initial price range on mount
+  const [priceRange, setPriceRange] = useState<number[]>([minPrice, maxPrice]);
   useEffect(() => {
     onPriceChange([minPrice, maxPrice]);
   }, [minPrice, maxPrice, onPriceChange]);

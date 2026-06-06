@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { IUser } from "@/redux/api/features/auth/authSlice";
 import { useGetAllUsersQuery, useUpdateUserMutation } from "@/redux/api/features/user/user.Api";
 import { Button, Table } from "antd";
@@ -29,9 +29,9 @@ function UserManagement() {
       dataIndex: "role",
       key: "role",
       render: (role: string) => (
-        <span style={{ fontWeight: "bold", color: role === "ADMIN" ? "green" : "blue" }}>
-          {role}
-        </span>
+         <span style={{ fontWeight: "bold", color: role === "ADMIN" ? "#004E64" : "black" }}>
+      {role}
+    </span>
       ),
     },
     {
@@ -39,7 +39,7 @@ function UserManagement() {
       key: "action",
       render: (_, record) =>
         record.role !== "admin" ? (
-          <Button type="primary" onClick={() => handleMakeAdmin((record as any)._id)}>
+          <Button  style={{ fontWeight: "bold", color:"white", backgroundColor:"#004E64"  }} onClick={() => handleMakeAdmin((record as any)._id)}>
             Make Admin
           </Button>
         ) : (

@@ -1,10 +1,7 @@
-// import { useDeleteProductsMutation } from '@/redux/api/features/products/productApi'
-import { useDeleteProductsMutation } from '@/redux/api/features/products/productApi';
-import toast from 'react-hot-toast';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function DeleteModal({ closePopup, items }: any) {
-    // const [delete,setDelete] =useState(false)
+import { useDeleteProductsMutation } from '@/redux/api/features/products/productApi';
+import toast from 'react-hot-toast';
+function DeleteModal({ closePopup, items }: any) {
     const [deleteProducts, { isLoading, error }] = useDeleteProductsMutation();
     console.log(items)
     const handleButton = async () => {

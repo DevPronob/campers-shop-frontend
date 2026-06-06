@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useState } from "react";
 import AddProductModal from "@/components/ui/AddProductModal";
 import DeleteModal from "@/components/ui/DeleteModal";
@@ -42,7 +42,7 @@ function ProductManagement() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-[#21b3f1] text-left text-xs font-semibold uppercase tracking-widest text-white">
+                <tr className="bg-[#004E64] text-left text-xs font-semibold uppercase tracking-widest text-white">
                   <th className="px-5 py-3">Product Image</th>
                   <th className="px-5 py-3">Name</th>
                   <th className="px-5 py-3">Price</th>
@@ -58,7 +58,10 @@ function ProductManagement() {
                   >
                     <td className="p-4">
                       <img
-                        src={items?.imageUrls[0]}
+                        src={items?.imageUrls?.[0] || '/placeholder.svg'}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder.svg';
+                        }}
                         className="w-16 md:w-32 max-w-full max-h-full"
                         alt="Product"
                       />
@@ -73,7 +76,7 @@ function ProductManagement() {
                     <td className="px-6 py-4 flex items-center pt-8 gap-3">
                       <button
                         onClick={() => openUpdate(items)}
-                        className="font-medium btn bg-[#21b3f1] text-white"
+                        className="font-medium btn bg-[#FF6B35] text-white"
                       >
                         Update Product
                       </button>

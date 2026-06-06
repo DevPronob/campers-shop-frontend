@@ -59,11 +59,46 @@
     }
   }
 
+/* ==== Premium Design Tokens ==== */
+:root {
+  --accent-primary-bg: #004E64; /* teal accent */
+  --accent-primary-bg-hover: #006B80;
+  --accent-primary-bg-active: #003F52;
+  --transition-speed: 300ms;
+}
+
+/* Glass‑morphism input */
+.glass-input {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(6px);
+  border-radius: 0.5rem;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+  transition: box-shadow var(--transition-speed) ease, transform var(--transition-speed) ease;
+}
+.glass-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-primary-bg);
+  transform: scale(1.02);
+}
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.15);
+}
+
+/* Ensure custom font is applied */
+body {
+  font-family: "Roboto Condensed", sans-serif;
+}
+
   @layer base {
     * {
       @apply border-border;
     }
     body {
       @apply bg-background text-foreground;
+      font-family: "Roboto Condensed", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: auto;
+  font-style: normal;
     }
   }

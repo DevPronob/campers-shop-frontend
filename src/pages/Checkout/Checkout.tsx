@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -67,7 +68,7 @@ const Checkout: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 font-poppins">
       <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
-        {/* User Info */}
+        
         <div className="bg-white rounded-lg shadow p-8 border border-gray-200">
           <h2 className="text-2xl font-semibold text-[#004E64] mb-6">Your Information</h2>
           <form className="space-y-4">
@@ -88,7 +89,7 @@ const Checkout: React.FC = () => {
           </form>
         </div>
 
-        {/* Payment & Summary */}
+        
         <div className="bg-white rounded-lg shadow p-8 border border-gray-200 flex flex-col justify-between">
           <div>
             <h2 className="text-2xl font-semibold text-[#004E64] mb-4">Payment Method</h2>
@@ -103,7 +104,7 @@ const Checkout: React.FC = () => {
               <option value="stripe">Stripe Payment</option>
             </select>
 
-            {/* Order Summary */}
+            
             <div className="p-4 rounded-md border border-gray-200 mb-6">
               <h3 className="text-lg font-medium text-gray-800 mb-2">Order Summary</h3>
               <div className="flex justify-between text-gray-700 mb-1">

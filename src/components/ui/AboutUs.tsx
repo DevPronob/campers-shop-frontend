@@ -5,16 +5,16 @@ export default function AboutUs() {
   return (
     <div>
          <section className="flex flex-col lg:flex-row items-center justify-between px-6 lg:px-20 py-16 bg-white">
-      {/* Left: Images */}
+      
       <div className="relative w-full lg:w-1/2 flex justify-center items-center mb-12 lg:mb-0">
-        {/* Main Image */}
+        
         <img
           src={img1}
           alt="Craftsperson working"
           className="rounded-lg shadow-lg w-4/5 object-cover"
         />
 
-        {/* Overlapping smaller image */}
+        
         <img
           src={img2}
           alt="Furniture design"
@@ -22,7 +22,7 @@ export default function AboutUs() {
         />
       </div>
 
-      {/* Right: Text Content */}
+      
       <div className="w-full lg:w-1/2 lg:pl-12">
         <p className="text-sm text-orange-600 font-semibold uppercase mb-2">
           Unity Collection
@@ -40,7 +40,7 @@ export default function AboutUs() {
         </p>
 
         <a
-          href="#"
+          href="/about"
           className="inline-flex items-center px-6 py-3 bg-black text-white font-semibold rounded hover:bg-gray-800 transition-all duration-200"
         >
           More About Us

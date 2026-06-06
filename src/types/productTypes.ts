@@ -14,12 +14,49 @@ export type TProduct = {
     __v: number;
 };
 
-export type TCartItem = {
-    _id: string;
-    productId: TProduct;
-    quantity: number;
-    __v: number;
+export type TCartProduct = {
+  _id: string;
+  name: string;
+  price: number;
+  imageUrls: string[];
 };
-export type CartData = {
-    data: TCartItem[];
+
+
+export type TCartItem = {
+  _id: string;
+  productId: TCartProduct;
+  quantity: number;
+};
+
+
+export type TCart = {
+  _id: string;
+  userId: string;
+  items: TCartItem[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};
+
+
+export type TGetCartResponse = {
+  success: boolean;
+  message: string;
+  data: TCart;
+};
+
+
+export type TAddToCartPayload = {
+  productId: string;
+  quantity: number;
+};
+
+export type TUpdateCartPayload = {
+  id: string;
+  quantity: number;
+};
+
+
+export type TDeleteCartPayload = {
+  id: string;
 };
